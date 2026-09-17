@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+data/sessions/
+_site/
+.env
+.venv/
+.agents/
+.codex/
+*:Zone.Identifier
