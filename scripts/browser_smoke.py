@@ -21,7 +21,8 @@ with tempfile.TemporaryDirectory(prefix='cdg-ui-') as directory:
  shutil.copytree(ROOT/'web',Path(directory)/'repo')
  server=ThreadingHTTPServer(('127.0.0.1',0),partial(QuietHandler,directory=directory))
  thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
- url=f'http://127.0.0.1:{server.server_port}/repo/'
+ site=f'http://127.0.0.1:{server.server_port}/repo/'
+ url=site+'paths-of-glory.html'
  try:
   with sync_playwright() as pw:
    browser=pw.chromium.launch(headless=True,args=['--no-sandbox'])
@@ -30,7 +31,11 @@ with tempfile.TemporaryDirectory(prefix='cdg-ui-') as directory:
    errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
    page.on('response',lambda r:errors.append(f'HTTP {r.status}: {r.url}') if r.status>=400 else None)
    page.on('request',lambda r:errors.append(f'Unexpected API: {r.url}') if '/api/' in r.url else None)
-   page.goto(url);expect(page.get_by_text('두 진영의 선택,')).to_be_visible()
+   page.goto(site)
+   expect(page.locator('a[href="./paths-of-glory.html"]')).to_be_visible()
+   expect(page.locator('a[href="./combat-commander/"]')).to_be_visible()
+   page.locator('a[href="./paths-of-glory.html"]').click()
+   expect(page.get_by_text('두 진영의 선택,')).to_be_visible()
    page.screenshot(path='/tmp/cdg-welcome.png',full_page=True)
    page.get_by_role('button',name='첫 번째 게임 시작').click()
    page.locator('#setup-form input[name=name]').fill('브라우저 검증')
@@ -76,7 +81,7 @@ with tempfile.TemporaryDirectory(prefix='cdg-ui-') as directory:
    page.locator('nav [data-view=rules]').click()
    expect(page.get_by_text('사용자 확인: 마타 하리 = 동맹군 #17')).to_be_visible()
    for link in page.locator('.source-link').all():
-    assert page.request.get(url+link.get_attribute('href').removeprefix('./')).ok
+    assert page.request.get(site+link.get_attribute('href').removeprefix('./')).ok
    page.locator('nav [data-view=table]').click()
    page.set_viewport_size({'width':390,'height':844})
    assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), 'Mobile horizontal overflow'

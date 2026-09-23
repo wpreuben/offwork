@@ -1,4 +1,12 @@
-# CDG SOLO · 나만의 전략 테이블
+# OFFWORK · 솔로 보드게임
+
+GitHub Pages 첫 화면에서 **패스 오브 글로리**와 **Combat Commander: CC: BOT** 진행 도우미를 선택할 수 있습니다. 기존 패스 오브 글로리 앱은 `paths-of-glory.html`, Combat Commander 앱은 `combat-commander/`에 있습니다. 두 앱의 저장 기록은 서로 분리됩니다.
+
+Combat Commander 앱은 한국어 규칙 V3.1과 제공된 명령 보드·행동 표를 따라 봇 준비, 명령·행동 판정, 트랙 이동, 턴 종료를 안내합니다. 원작 CC: BOT 제작자는 **jamesWUK**입니다. 실제 유닛의 이동·공격 대상은 플레이어가 결정합니다. 개별 행동 이름은 제공된 영문 표기를 유지합니다. 기본 게임의 덱 소진 절차와 트랙 끝 이후 이동은 자료에 없으므로 앱이 임의로 판정하지 않습니다.
+
+Combat Commander의 확정된 단계는 브라우저 전용 JSON 파일(OPFS)에 저장됩니다. 새 게임은 기존 게임을 보존하고, **저장된 게임**에서 다시 열 수 있습니다. JSON 내보내기·가져오기와 실행 취소도 지원합니다.
+
+## 기존 패스 오브 글로리 앱
 
 제공된 PDF를 따르는 **패스 오브 글로리 CDG 솔로 카드 진행 웹앱**입니다. GitHub Pages에서 서버 없이 실행합니다. 양측의 카드 선택, 운명 주사위, 6개 행동 라운드, 전투 카드 절차와 JSON 기록을 관리합니다. 지도·유닛·이벤트 선행 조건·실제 보드 효과는 사람이 기본 게임에서 해결합니다.
 
@@ -7,7 +15,7 @@
 1. 프로젝트를 GitHub 저장소의 `main` 브랜치에 업로드합니다. `data/sessions/`는 개인 저장 파일이므로 업로드하지 않습니다 (`.gitignore` 포함).
 2. 저장소 **Settings → Pages → Build and deployment → Source → GitHub Actions**를 선택합니다.
 3. `main`에 push하거나 **Actions → Deploy GitHub Pages → Run workflow**를 실행합니다.
-4. 배포 작업에 표시되는 `https://<사용자>.github.io/<저장소>/` 주소를 엽니다.
+4. 배포 작업에 표시되는 `https://<사용자>.github.io/<저장소>/` 주소를 엽니다. 첫 화면에서 게임을 선택합니다.
 
 [GitHub 공식 배포 안내](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)를 따르는 `.github/workflows/pages.yml`이 포함되어 있습니다. Python 규칙 테스트 및 브라우저 규칙 대조 검증 후 `web/`만 정적 사이트로 게시합니다. 저장 파일·원본 작업 폴더는 배포 산출물에 포함하지 않습니다. 카드 이미지, 공식 보드·주사위, 룰북도 포함하므로 CDN이나 외부 런타임 패키지가 필요 없습니다. 기본 브랜치가 `main`이 아니면 워크플로의 브랜치 이름을 바꾸세요.
 

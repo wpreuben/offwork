@@ -25,7 +25,7 @@ python3 -m venv /tmp/cdg-test-venv
 /tmp/cdg-test-venv/bin/python scripts/browser_smoke.py
 ```
 
-환경에 따라 Chromium 라이브러리와 한국어 폰트가 필요합니다. Playwright는 개발 검증용이며 앱 런타임 의존성이 아닙니다. 테스트는 임시 디렉터리로 `web/`을 복사하여 **일반 정적 HTTP 서버의 `/repo/` 하위 경로**에서 실행합니다. 실사용 브라우저/저장 폴더를 사용하지 않습니다.
+환경에 따라 Chromium 라이브러리와 한국어 폰트가 필요합니다. Playwright는 개발 검증용이며 앱 런타임 의존성이 아닙니다. 테스트는 임시 디렉터리로 `web/`을 복사하여 **일반 정적 HTTP 서버의 `/repo/` 하위 경로**에서 실행하고, 첫 화면의 게임 선택 메뉴를 거쳐 패스 오브 글로리 앱을 검사합니다. 실사용 브라우저/저장 폴더를 사용하지 않습니다.
 
 검증 항목:
 

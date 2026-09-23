@@ -8,6 +8,7 @@
 @media(max-width:650px){.sidebar .nav-item{flex-direction:column;white-space:nowrap;font-size:9px;gap:5px;padding:9px 3px}.sidebar .nav-item>span{font-size:17px}.sidebar nav{gap:4px}}
 /* Supplied GMT Print & Play artwork; originals remain unmodified. */
 :root{--cp:#196bb8;--ap:#386831}
+.hub-return{display:block;margin:22px 0 0;padding:9px 10px;border:1px solid #ced8ca;border-radius:5px;text-decoration:none;font-size:11px;font-weight:700;color:#376049}.hub-return:hover{background:#e0e9df}@media(max-width:650px){.hub-return{display:inline-block;margin:12px 0 0}.sidebar .nav-label{display:none}}
 .file-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:14px 35px;border-bottom:1px solid var(--line);background:var(--panel)}
 .file-toolbar span{font-size:10px;color:var(--muted);margin-left:auto}
 .file-toolbar .primary{font-size:12px;padding:10px 14px}
