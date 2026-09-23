@@ -1,5 +1,5 @@
 import {JsonStore} from './storage.js';
-import {diceForCard,faceIndices} from './dice-data.js';
+import {diceForCard,faceIndices} from './dice-data.js?v=20260923-2';
 const $ = s => document.querySelector(s);
 const STORE = 'ccbot-ko-session:' + location.pathname;
 const NATIONS = {American:'미국',German:'독일',Russian:'소련',British:'영국',French:'프랑스',Italian:'이탈리아'};
