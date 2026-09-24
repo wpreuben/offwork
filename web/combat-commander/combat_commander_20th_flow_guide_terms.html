@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Combat Commander 20주년판 — 플레이 흐름 중심 룰 가이드</title>
+<style>
+:root{
+  --bg:#f2efe8; --paper:#fffdf8; --ink:#20251f; --muted:#6b7168;
+  --olive:#40533b; --olive2:#6e805e; --tan:#b59b70; --red:#8c3d32;
+  --blue:#405a68; --line:#d8d1c3; --soft:#ece7dc; --dark:#273126;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+a{color:inherit}
+header{background:linear-gradient(135deg,#243126,#495c42);color:#fff;padding:42px 26px 32px;border-bottom:7px solid #9b8158}
+.wrap{max-width:1180px;margin:auto}
+.eyebrow{font-size:13px;letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+h1{font-size:clamp(30px,5vw,54px);line-height:1.1;margin:8px 0 12px}
+.subtitle{max-width:820px;color:#e9eee6;font-size:17px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.toolbar a,.toolbar button{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:8px 13px;text-decoration:none;cursor:pointer}
+.layout{max-width:1180px;margin:24px auto 70px;display:grid;grid-template-columns:240px 1fr;gap:26px;padding:0 18px}
+aside{position:sticky;top:16px;align-self:start;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:15px}
+aside b{display:block;margin-bottom:8px}
+aside a{display:block;text-decoration:none;padding:7px 9px;border-radius:8px;color:#4e554c}
+aside a:hover{background:var(--soft);color:#111}
+main{min-width:0}
+.section{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:22px;box-shadow:0 3px 14px rgba(60,50,35,.05)}
+.section h2{margin:0 0 6px;font-size:29px;color:var(--dark)}
+.section h3{margin:24px 0 7px;color:var(--olive)}
+.kicker{color:var(--muted);margin-top:0}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0}
+.step{background:#eef0e9;border:1px solid #d5dccf;border-radius:12px;padding:15px;min-height:118px;position:relative}
+.step strong{display:block;color:var(--olive);margin-bottom:5px}
+.step:not(:last-child)::after{content:"→";position:absolute;right:-10px;top:42%;z-index:2;font-weight:800;color:#7a7f76}
+.note{border-left:5px solid var(--tan);background:#f7f1e7;padding:12px 14px;border-radius:8px;margin:14px 0}
+.warn{border-left-color:var(--red);background:#f8ece9}
+.good{border-left-color:var(--olive2);background:#eef4eb}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.rule{border:1px solid var(--line);border-radius:12px;padding:15px;background:#fff}
+.rule h4{margin:0 0 5px;font-size:18px}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:#e7ebdf;color:#33442f;margin-right:4px}
+.tag.red{background:#f0dfdb;color:#7f372e}.tag.blue{background:#e2e9ed;color:#385260}.tag.tan{background:#eee4d3;color:#735b35}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}
+th{background:#f1eee6}
+summary{cursor:pointer;font-weight:700;color:var(--olive);padding:4px 0}
+details{border-top:1px dashed var(--line);padding:8px 0}
+.pillrow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+.pill{background:#ece9df;border:1px solid #dad4c6;border-radius:999px;padding:4px 9px;font-size:13px}
+.search{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:white;margin:8px 0 16px}
+.hidden{display:none!important}
+.small{font-size:13px;color:var(--muted)}
+.card-anatomy{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.anatomy{border-radius:12px;padding:14px;border:1px solid var(--line)}
+.anatomy strong{display:block;margin-bottom:4px}
+footer{max-width:1180px;margin:0 auto 40px;padding:0 20px;color:#62695f;font-size:13px}
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  aside{position:relative;top:auto}
+  .flow{grid-template-columns:1fr}
+  .step:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-19px}
+  .cards,.card-anatomy{grid-template-columns:1fr}
+}
+@media print{
+  body{background:white}.layout{display:block;max-width:none}aside,.toolbar,.search{display:none}.section{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap">
+<div class="eyebrow">COMBAT COMMANDER · 20주년판</div>
+<h1>플레이 흐름 중심 룰 가이드</h1>
+<p class="subtitle">룰북을 처음부터 끝까지 외우는 대신, 실제 플레이 중 “지금 무엇을 해야 하는가?”를 기준으로 큰 덩어리부터 내려가는 참고용 웹페이지입니다. 메인 룰북의 구조를 따르며, 한국어 용어는 제공해주신 <b>통일 용어집</b>과 <b>목록표 용어대조</b>를 기준으로 통일했습니다.</p>
+<div class="toolbar">
+<a href="#flow">큰 게임 흐름</a><a href="#orders">명령</a><a href="#actions">행동</a><a href="#events">이벤트</a><a href="#combat">사격·전투</a><a href="#terrain">지형</a>
+<button onclick="window.print()">인쇄 / PDF 저장</button>
+</div>
+</div>
+</header>
+
+<div class="layout">
+<aside>
+<b>빠른 이동</b>
+<a href="#flow">1. 큰 게임 흐름</a>
+<a href="#cards">2. 운명 카드 읽기</a>
+<a href="#core">3. 핵심 규칙</a>
+<a href="#orders">4. 명령</a>
+<a href="#actions">5. 행동</a>
+<a href="#events">6. 이벤트·트리거</a>
+<a href="#combat">7. 사격·백병전</a>
+<a href="#time">8. 시간·승리</a>
+<a href="#terrain">9. 지형 빠른표</a>
+<a href="#lookup">10. 한 줄 검색</a>
+</aside>
+
+<main>
+<section class="section" id="flow">
+<h2>1. 큰 게임 흐름</h2>
+<p class="kicker">Combat Commander의 핵심은 “내 턴의 명령”과 “양쪽이 끼어드는 행동”, 그리고 굴림에서 갑자기 터지는 트리거입니다.</p>
+<div class="flow">
+<div class="step"><strong>① 시나리오가 선 지정</strong>시나리오에서 정한 플레이어가 첫 턴을 시작합니다.</div>
+<div class="step"><strong>② 내 턴 선택</strong><b>명령을 1개 이상 수행</b>하거나, 명령을 하나도 하지 않고 <b>패스하여 카드 버리기</b>.</div>
+<div class="step"><strong>③ 행동이 끼어듦</strong>전제조건만 맞으면 양쪽 모두 어느 플레이어의 턴이든 행동을 사용합니다.</div>
+<div class="step"><strong>④ 손패 보충</strong>활성 플레이어만 자기 손패 한도까지 운명 카드를 보충합니다.</div>
+<div class="step"><strong>⑤ 상대 턴</strong>번갈아 반복. 시간 전진·항복·전멸·돌연 종료 등으로 게임이 끝납니다.</div>
+</div>
+<div class="note good"><b>가장 중요한 감각:</b> “내 턴 = 내 유닛이 전부 움직이는 턴”이 아닙니다. 손에 있는 카드가 허용하는 <b>명령 하나씩</b> 해결하고, 상대는 그 사이에 행동으로 대응합니다.</div>
+<div class="note"><b>동시 타이밍:</b> 양쪽이 동시에 무언가를 할 수 있다면 원칙적으로 <b>비활성 플레이어가 먼저</b> 처리합니다.</div>
+</section>
+
+<section class="section" id="cards">
+<h2>2. 운명 카드 한 장을 어떻게 읽나</h2>
+<div class="card-anatomy">
+<div class="anatomy"><strong>상단 — 명령 (Order)</strong>손에 들고 있다가 <b>자기 턴에만</b> 사용합니다. 사용하면 버립니다.</div>
+<div class="anatomy"><strong>사진 아래 — 행동 (Action)</strong>조건만 맞으면 <b>어느 플레이어의 턴이든</b> 사용합니다. 사용하면 버립니다.</div>
+<div class="anatomy"><strong>행동 아래 — 이벤트 (Event)</strong>손패에서 골라 쓰는 것이 아닙니다. <b>이벤트! 트리거로 덱 위에서 공개</b>됐을 때만 실행합니다.</div>
+<div class="anatomy"><strong>왼쪽 아래 — 무작위 헥스</strong>저격수·일부 이벤트 위치, 고장 난 무기 관련 판정 등에 사용합니다.</div>
+<div class="anatomy"><strong>오른쪽 아래 — 주사위</strong>실제 주사위 대신 덱 위 카드의 두 주사위를 사용합니다. 보통 합, 포 계열 명중 판정은 곱을 사용합니다.</div>
+<div class="anatomy"><strong>빨간 테두리 — 트리거</strong>이벤트! / 작동 불량! / 저격수! / 시간!가 나오면 원래 판정 적용 전에 해당 트리거를 먼저 완전히 처리합니다.</div>
+</div>
+<div class="note warn"><b>손에 든 카드는 한 번에 한 용도만:</b> 명령으로 쓰면 그 카드의 행동은 못 쓰고, 행동으로 쓰면 그 카드의 명령은 못 씁니다. 이벤트·헥스·주사위는 손패에 있을 때는 무시합니다.</div>
+</section>
+
+<section class="section" id="core">
+<h2>3. 핵심 규칙 — 이것만 잡고 시작</h2>
+<div class="cards">
+<div class="rule"><h4>활성화</h4><span class="tag">기본</span>유닛은 보통 한 턴에 하나의 명령에만 활성화됩니다. 지휘관을 활성화하면 지휘 반경 내 아군 비지휘관 유닛도 같은 명령에 활성화할 수 있습니다.</div>
+<div class="rule"><h4>지휘관</h4><span class="tag">Command</span>같은 헥스의 아군 분대·조 능력치와 일부 무기를 강화하고, 지휘 반경 안 유닛을 함께 활성화합니다. 지휘관은 자기 자신이나 다른 지휘관은 강화하지 않습니다.</div>
+<div class="rule"><h4>와해 / 고장</h4><span class="tag red">Broken</span>정상 유닛이 와해되면 뒤집습니다. 이미 와해된 유닛이 다시 와해되면 제거됩니다. 고장 난 무기·무전기는 사용할 수 없습니다.</div>
+<div class="rule"><h4>제압</h4><span class="tag red">Suppressed</span>유닛 성능을 떨어뜨리는 별도 상태입니다. 회복 명령 시작 시 아군의 제압 마커를 모두 제거합니다.</div>
+<div class="rule"><h4>시선(LOS)</h4><span class="tag blue">LOS</span>두 헥스 중심점을 잇는 선으로 판정합니다. 차단 지형은 중간 시선을 막고, 방해 지형은 공격을 약화시킵니다. 연막은 들어가거나 나오는 시선에도 영향을 줍니다.</div>
+<div class="rule"><h4>스태킹</h4><span class="tag">7 figures</span>한 헥스의 아군 병사 그림 총합이 7까지는 정상. 8 이상이면 초과 스태킹이며 턴 종료 시 반드시 정리합니다.</div>
+</div>
+</section>
+
+<section class="section" id="orders">
+<h2>4. 명령 (Order)</h2>
+<p class="kicker">명령은 자기 턴의 주 행동입니다. 카드 한 장을 내고 명령 하나를 선언한 뒤, 그 명령을 끝까지 해결하고 다음 명령을 결정합니다.</p>
+<div class="cards">
+<div class="rule searchable"><h4>O15 패스 / 카드 버리기</h4><span class="tag">턴 대체</span>이번 턴에 명령을 하나도 하지 않을 때 사용합니다. 국가별 버리기 한도까지 원하는 수의 카드를 버립니다. 그 뒤 손패를 보충하고 턴 종료.</div>
+<div class="rule searchable"><h4>O16 전진 (Advance)</h4><span class="tag">1헥스</span><span class="tag red">백병전 가능</span>활성화한 유닛이 인접 헥스로 전진합니다. 이동 명령과 달리 보통 이동력/MP를 쓰지 않으며 적 점유 헥스로 들어가 백병전을 만들 수 있습니다.</div>
+<div class="rule searchable"><h4>O17 포병 지원 차단</h4><span class="tag tan">포병</span>상대의 포병 지원 능력을 방해하는 명령입니다. 해당 카드와 상황이 있을 때 룰북 O17 절차를 따릅니다.</div>
+<div class="rule searchable"><h4>O18 포병 지원 요청</h4><span class="tag tan">Radio</span>정상 무전기를 이용해 관측탄을 배치·조정한 뒤 포병 공격을 해결합니다. 포병은 일반 사격과 절차가 다르므로 관측탄과 포병 영향 규칙을 함께 봅니다.</div>
+<div class="rule searchable"><h4>O19 지휘 혼선</h4><span class="tag red">사용 불가</span>이 카드의 명령은 사용할 수 없습니다. 다른 용도로 쓸 수 있는지 카드의 행동을 확인합니다.</div>
+<div class="rule searchable"><h4>O20 사격 (Fire)</h4><span class="tag red">전투 핵심</span>유닛을 사격에 활성화하고 목표 헥스를 공격합니다. 사격 그룹, LOS, 사거리, 방해, 포 계열 무기, 공격 굴림과 방어 굴림이 핵심입니다.</div>
+<div class="rule searchable"><h4>O21 이동 (Move)</h4><span class="tag">MP</span><span class="tag blue">기회 사격</span>활성 유닛은 현재 이동력만큼 MP를 쓰며 헥스를 이동합니다. 새 헥스에 들어가 MP를 지불할 때마다 상대에게 기회 사격 기회가 생깁니다.</div>
+<div class="rule searchable"><h4>O22 회복 (Recover)</h4><span class="tag">아군</span>플레이어 자신을 활성화합니다. 먼저 아군 제압을 전부 제거하고, 명령 선언 시점에 와해된 아군 유닛마다 재정비 굴림을 합니다.</div>
+<div class="rule searchable"><h4>O23 패주 (Rout)</h4><span class="tag red">와해 유닛</span>자신 또는 상대 플레이어를 선택해 그 소속 와해 유닛들에 패주 굴림을 합니다. 결과가 현재 사기를 넘으면 차이만큼 아군 지도 가장자리 쪽으로 후퇴합니다.</div>
+</div>
+
+<h3>이동할 때 특히 기억할 것</h3>
+<div class="note warn"><b>헥스 진입 → 잠깐 멈춤 → 상대 행동 먼저.</b> 이동 유닛이 새 헥스에 들어갈 때마다 누적 MP를 선언하고 상대에게 기회 사격·숨겨진 지뢰·철조망 같은 행동 기회를 줍니다. 같은 타이밍이면 비활성 플레이어가 원하는 행동을 먼저 끝냅니다.</div>
+
+<h3>회복 / 패주 굴림 요약</h3>
+<table>
+<thead><tr><th>굴림</th><th>회복(아군 와해)</th><th>패주(선택한 측 와해)</th></tr></thead>
+<tbody>
+<tr><td>굴림 &lt; 현재 사기</td><td>재정비</td><td>효과 없음</td></tr>
+<tr><td>굴림 = 현재 사기</td><td>제압 + 와해 유지</td><td>미제압이면 제압</td></tr>
+<tr><td>굴림 &gt; 현재 사기</td><td>효과 없음</td><td>차이만큼 후퇴</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="section" id="actions">
+<h2>5. 행동 (Action)</h2>
+<p class="kicker">행동은 “턴”이 아니라 “타이밍”에 붙습니다. 카드에 적힌 전제조건이 맞는 순간 사용합니다.</p>
+<div class="note good"><b>일반 원칙:</b> 같은 상황에 여러 행동을 연달아 사용할 수 있고 효과도 누적됩니다. 양쪽이 동시에 쓰려 하면 비활성 플레이어가 먼저 원하는 행동을 모두 처리합니다. 기회 사격을 제외한 행동은 보통 유닛을 활성화하지 않습니다.</div>
+
+<div class="cards">
+<div class="rule searchable"><h4>매복</h4><span class="tag red">백병전 직전</span>백병전 굴림 전에 사용. 상대가 참가 유닛 하나를 선택해 와해시킵니다. 모든 매복을 끝낸 뒤 백병전 화력을 계산합니다.</div>
+<div class="rule searchable"><h4>돌격 사격</h4><span class="tag blue">이동 중</span>이동에 활성화된 테두리 화력 유닛/무기로 사격 공격 1회. 실제 이동 전·중·후 어느 때나 가능.</div>
+<div class="rule searchable"><h4>사전 조준</h4><span class="tag tan">방어자 전용</span>조건을 만족하는 무기가 참가한 사격 공격 굴림 직전, 화력 +2.</div>
+<div class="rule searchable"><h4>은폐</h4><span class="tag">방어 굴림 직전</span>목표 헥스 엄폐만큼 상대의 사격 공격 총합을 낮춥니다.</div>
+<div class="rule searchable"><h4>십자포화</h4><span class="tag red">이동 목표</span>이동 중인 유닛을 향한 사격 공격 굴림 직전 화력 +2.</div>
+<div class="rule searchable"><h4>폭파</h4><span class="tag">상대 패스</span>상대가 패스로 카드 1장 이상 버릴 때, 아군 유닛이 있는 헥스의 방어시설 1개 제거.</div>
+<div class="rule searchable"><h4>진지 구축</h4><span class="tag tan">Time 처리 끝</span>게임 시간 전진 절차가 끝날 때 아군 점유 헥스에 개인호를 놓을 수 있습니다.</div>
+<div class="rule searchable"><h4>기회 사격</h4><span class="tag red">상대 이동</span>상대가 새 헥스에 들어가 MP를 지불한 직후. 사격 행동 카드로 유닛을 활성화하고 이동 목표를 공격합니다.</div>
+<div class="rule searchable"><h4>수류탄</h4><span class="tag">인접 사격</span>사격 참가 말 중 하나 이상이 목표에 인접하면 사격 굴림 직전 화력 +2.</div>
+<div class="rule searchable"><h4>숨겨진 참호 / 숨겨진 지뢰</h4><span class="tag tan">방어자 전용</span>각 카드의 전제조건이 충족되는 순간 사용합니다. 참호는 방어시설을 배치하고, 지뢰는 진입한 적에게 영향을 줍니다.</div>
+<div class="rule searchable"><h4>숨겨진 토치카 / 숨겨진 철조망</h4><span class="tag tan">방어자 전용</span>카드에 명시된 타이밍과 대상 헥스 조건에 따라 토치카 또는 철조망을 배치합니다.</div>
+<div class="rule searchable"><h4>숨겨진 유닛</h4><span class="tag tan">방어자 전용</span>카드가 허용하는 조건에서 예비 유닛을 지도에 투입합니다.</div>
+<div class="rule searchable"><h4>경상</h4><span class="tag">분대 보호</span>아군 분대가 와해되는 순간 1 VP를 잃는 대신 같은 병력 등급의 조로 교체합니다.</div>
+<div class="rule searchable"><h4>정밀 사격</h4><span class="tag">사격 강화</span>카드가 지정한 국가의 분대/조가 사격에 참가하면 굴림 직전 화력 +2.</div>
+<div class="rule searchable"><h4>무자비</h4><span class="tag red">백병전 종료</span>조건을 충족한 진영이 백병전 종료 시 2 VP를 얻습니다.</div>
+<div class="rule searchable"><h4>연막탄</h4><span class="tag blue">이동 중</span>테두리 이동력을 가진 활성 유닛이 자기 또는 인접 헥스에 무작위 연막을 배치.</div>
+<div class="rule searchable"><h4>분산 사격</h4><span class="tag">2개 헥스</span>조건을 만족하면 인접한 두 목표 헥스에 한 번의 공격 굴림으로 동시에 사격.</div>
+<div class="rule searchable"><h4>지속 사격</h4><span class="tag red">위험 감수</span>박격포/기관총이 참가하면 화력 +2. 같은 눈이 나오면 참가한 해당 무기 중 하나가 고장.</div>
+</div>
+</section>
+
+<section class="section" id="events">
+<h2>6. 이벤트와 주사위 트리거</h2>
+<div class="flow">
+<div class="step"><strong>① 굴림</strong>덱 맨 위 카드의 주사위를 확인합니다.</div>
+<div class="step"><strong>② 빨간 트리거?</strong>이벤트!/작동 불량!/저격수!/시간!가 있으면 정상 진행을 중단합니다.</div>
+<div class="step"><strong>③ 트리거 완전 해결</strong>원래 굴림 결과를 적용하기 전에 트리거를 끝까지 해결합니다.</div>
+<div class="step"><strong>④ 원래 결과 적용</strong>중단했던 사격·패주·회복 등의 결과를 이어서 적용합니다.</div>
+<div class="step"><strong>⑤ 진행 재개</strong>원래 명령/행동/턴으로 돌아갑니다.</div>
+</div>
+
+<div class="cards">
+<div class="rule searchable"><h4>이벤트!</h4><span class="tag red">추가 카드 공개</span>굴린 플레이어가 덱 위 카드를 한 장 더 공개해 그 카드의 이벤트를 실행합니다. 불가능한 부분은 무시하고 가능한 부분은 수행합니다.</div>
+<div class="rule searchable"><h4>작동 불량!</h4><span class="tag red">사격 공격 굴림만</span>사격 공격 굴림에서 발생하면 사격에 사용한 모든 무기가 고장 납니다. 명중 판정 등 다른 굴림에서는 발생하지 않습니다.</div>
+<div class="rule searchable"><h4>저격수!</h4><span class="tag red">무작위 헥스</span>추가 카드를 공개해 무작위 헥스를 확인하고, 그 헥스 또는 인접 헥스의 유닛 하나를 선택해 와해시킬 수 있습니다.</div>
+<div class="rule searchable"><h4>시간!</h4><span class="tag red">시간 전진</span>시간 마커를 1칸 전진시키고 시간 전진 절차를 수행합니다. 덱의 마지막 카드를 공개/뽑는 경우도 시간!처럼 처리합니다.</div>
+</div>
+
+<h3>이벤트는 대략 이런 일을 합니다</h3>
+<div class="pillrow">
+<span class="pill">무작위 헥스에 화재/연막/지뢰/개인호</span>
+<span class="pill">유닛 와해·제압·재정비·제거</span>
+<span class="pill">증원·침투·영웅 등장</span>
+<span class="pill">목표·승점 변화</span>
+<span class="pill">무기 고장·복구</span>
+<span class="pill">손패 공개·버리기</span>
+</div>
+<div class="note"><b>무작위 헥스가 자주 보이는 이유:</b> 항공 지원, 화재, 부비트랩, 먼지, 침투, 고장, 잔해, 전투 충격, 포탄 구덩이, 경상병 등 여러 이벤트가 위치를 Random Hex로 정합니다.</div>
+</section>
+
+<section class="section" id="combat">
+<h2>7. 사격과 백병전 — 전투의 뼈대</h2>
+<h3>사격 공격</h3>
+<div class="flow">
+<div class="step"><strong>① 사격자/목표</strong>사거리와 LOS 확인.</div>
+<div class="step"><strong>② 화력 계산</strong>유닛·무기·지휘·행동·방해 등 적용.</div>
+<div class="step"><strong>③ 공격 굴림</strong>화력 + 주사위 = 공격 총합.</div>
+<div class="step"><strong>④ 각 유닛 방어</strong>현재 사기 + 주사위 = 방어 총합.</div>
+<div class="step"><strong>⑤ 결과</strong>공격 총합과 비교해 와해/제압/무효 등을 적용.</div>
+</div>
+<div class="note"><b>목표는 헥스입니다.</b> 사격 공격 굴림 당시 목표 헥스에 있던 대상 측 각 유닛이 자기 방어 굴림을 합니다.</div>
+
+<h3>포 계열 무기</h3>
+<p>능력치 뒤에 흰 띠가 있는 무기는 일반 무기와 다릅니다. 먼저 <b>명중 판정</b>이 필요하고, 사격 그룹에 섞을 수 없으며, 기회 사격에 사용할 수 없습니다.</p>
+
+<h3>백병전</h3>
+<p>전진으로 적 점유 헥스에 들어가면 백병전이 발생합니다. 매복 행동을 먼저 처리한 뒤 양측 백병전 화력을 계산하고, <b>비활성 플레이어가 먼저 굴린 뒤 활성 플레이어가 굴립니다.</b> 두 총합을 비교해 승패를 해결합니다.</p>
+</section>
+
+<section class="section" id="time">
+<h2>8. 시간, 승점, 게임 종료</h2>
+<div class="cards">
+<div class="rule"><h4>시간 전진 발생</h4>시간! 트리거가 나오거나, 한 플레이어가 자기 덱의 마지막 카드를 공개/뽑으면 시간 마커가 1칸 전진합니다.</div>
+<div class="rule"><h4>시간 전진 핵심</h4>트리거한 플레이어 덱 재구성 → 필요 시 돌연 종료 굴림 → 방어자 1 VP → 연막 제거 → 증원 등장 → 양쪽 진지 구축 행동 기회 순으로 처리합니다.</div>
+<div class="rule"><h4>승점 원천</h4>적 유닛 제거, 아군의 상대 지도 가장자리 이탈, 지도 목표 통제에서 주로 얻습니다.</div>
+<div class="rule"><h4>즉시 종료</h4>항복 마커 도달, 지도 위 마지막 유닛 제거, 마지막 유닛의 자발적 이탈, 또는 돌연 종료 굴림 성공 등으로 게임이 끝납니다.</div>
+</div>
+</section>
+
+<section class="section" id="terrain">
+<h2>9. 지형 빠른표</h2>
+<p class="kicker">세부 지형 규칙은 필요한 순간 찾고, 처음에는 “이동 비용 / 엄폐 / LOS” 세 칸만 보셔도 됩니다.</p>
+<table>
+<thead><tr><th>지형</th><th>이동</th><th>엄폐</th><th>LOS / 핵심</th></tr></thead>
+<tbody>
+<tr><td>건물</td><td>2</td><td>3</td><td>차단 지형</td></tr>
+<tr><td>숲</td><td>2</td><td>2</td><td>차단 지형, 박격포/포병 공중 폭발 보정 주의</td></tr>
+<tr><td>덤불</td><td>2</td><td>1</td><td>방해 3</td></tr>
+<tr><td>과수원</td><td>1</td><td>1</td><td>방해 2</td></tr>
+<tr><td>경작지</td><td>1</td><td>0</td><td>방해 1</td></tr>
+<tr><td>골짜기</td><td>2</td><td>조건부</td><td>특수 LOS</td></tr>
+<tr><td>개활지</td><td>1</td><td>0</td><td>방해 없음</td></tr>
+<tr><td>도로</td><td>1*</td><td>-1</td><td>이동 명령 중 도로 진입 시 이동력 보너스 가능</td></tr>
+<tr><td>개울</td><td>3</td><td>-1</td><td>수역</td></tr>
+<tr><td>습지</td><td>3</td><td>0</td><td>수역, LOS 방해 1</td></tr>
+<tr><td>연막</td><td>—</td><td>—</td><td>헥스 전체에 2–10 방해. 진입·진출·통과 LOS 모두 영향</td></tr>
+<tr><td>화재</td><td>통행 불가</td><td>—</td><td>LOS 차단</td></tr>
+</tbody>
+</table>
+<p class="small">* 도로/철도/소로 등은 진입 방향 등 추가 조건이 있으므로 실제 판정 시 지형 차트와 T78–T99를 확인하십시오.</p>
+</section>
+
+<section class="section" id="lookup">
+<h2>10. 한 줄 검색</h2>
+<p class="kicker">아래에 “기회 사격”, “패주”, “연막”, “백병전”처럼 입력하면 이 페이지의 룰 카드만 추려집니다.</p>
+<input class="search" id="q" placeholder="검색어 입력…" oninput="filterRules()">
+<div class="cards" id="searchResults">
+<div class="rule searchable"><h4>턴</h4>명령을 수행하거나 패스 → 손패 보충 → 상대 턴.</div>
+<div class="rule searchable"><h4>명령</h4>자기 턴에만. 한 장씩 내고 완전히 해결한 뒤 다음 명령을 결정.</div>
+<div class="rule searchable"><h4>행동</h4>전제조건만 맞으면 어느 턴이든. 동시라면 비활성 플레이어 우선.</div>
+<div class="rule searchable"><h4>이벤트</h4>손패에서 사용하지 않음. 이벤트! 트리거로 덱 위 카드 이벤트 실행.</div>
+<div class="rule searchable"><h4>무작위 헥스</h4>저격수, 여러 이벤트의 위치, 일부 고장 무기 판정에 사용.</div>
+<div class="rule searchable"><h4>기회 사격</h4>상대 이동 유닛이 새 헥스에 들어가 MP를 지불한 직후 비활성 플레이어가 대응.</div>
+<div class="rule searchable"><h4>회복</h4>제압 전부 제거 후 아군 와해 유닛 재정비 굴림.</div>
+<div class="rule searchable"><h4>패주</h4>선택한 플레이어의 와해 유닛마다 굴림. 사기 초과분만큼 후퇴.</div>
+</div>
+</section>
+</main>
+</div>
+
+<footer>
+<p><b>기준:</b> Combat Commander 20주년판 한국어 룰북 v1.1의 핵심 규칙·명령·행동·이벤트 구조를 플레이 흐름 중심으로 재편집한 학습용 요약입니다. 용어 표기는 제공된 「통일 용어집」과 「목록표 용어대조」를 우선 적용했습니다. 카드·시나리오가 일반 규칙과 충돌하면 카드/시나리오의 구체적 지시를 우선 확인하십시오.</p>
+</footer>
+
+<script>
+function filterRules(){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  document.querySelectorAll('.searchable').forEach(el=>{
+    el.classList.toggle('hidden', q && !el.innerText.toLowerCase().includes(q));
+  });
+}
+</script>
+</body>
+</html>
