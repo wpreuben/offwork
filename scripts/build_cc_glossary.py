@@ -8,7 +8,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / 'web' / 'combat-commander'
 SOURCES = BASE / 'glossary'
-PAGE = BASE / 'index.html'
+PAGE = BASE / 'glossary.html'
 START = '<!-- GLOSSARY_ROWS_START -->'
 END = '<!-- GLOSSARY_ROWS_END -->'
 
