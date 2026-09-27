@@ -1,6 +1,6 @@
 # 정적 앱 확장 주의 (2026-09-18)
 
-GitHub Pages의 실행 어댑터는 `web/games/paths-of-glory.js`이며, `web/storage.js`가 호출한다. 아래 Python 계약은 기존 서버판의 계약이다. 새 게임은 정적 JS 어댑터와 저장소 레지스트리, UI를 함께 확장해야 하며 Python 등록만으로 배포 앱에 추가되지 않는다. `scripts/check_static_rules.py`는 현재 PoG의 Python/브라우저 상태 전이를 대조한다. `web/games/pog-data.js`는 `scripts/build_static.py`로 생성한다. UI와 저장 계층에 게임 합법성을 복제하지 않는다.
+현재 GitHub Pages의 PoG 실물 카드 화면은 `web/games/physical-pog.js`와 `web/physical-storage.js`를 사용한다. 이전 가상 카드 어댑터 `web/games/paths-of-glory.js`와 `web/storage.js`는 schema_version 1 백업 검증·기존 Python판 대조용으로 남긴다. 아래 Python 계약은 기존 서버판의 계약이다. 새 게임은 정적 JS 어댑터, 저장소, UI를 함께 확장해야 하며 Python 등록만으로 배포 앱에 추가되지 않는다. `scripts/check_static_rules.py`는 이전 PoG Python/브라우저 상태 전이를 대조한다. `web/games/pog-data.js`는 `scripts/build_static.py`로 생성한다. UI와 저장 계층에 게임 합법성을 복제하지 않는다.
 
 # 새 CDG 솔로 게임 추가
 

@@ -1,5 +1,13 @@
 # JSON 저장 및 LLM 행동 프로토콜 (schema_version 1)
 
+## 실물 카드 헬퍼 (schema_version 2, 2026-09-27)
+
+현재 패스 오브 글로리 화면은 `web/physical-app.js`와 `web/physical-storage.js`를 사용한다. 브라우저 OPFS의 실제 JSON 파일에 확정 행동을 저장하며, Web Locks·리비전 검사·파일 close 후 성공 응답을 유지한다. `state`에는 턴, 행동 페이즈, 활성 진영, 양측 남은 카드 수와 행동 라운드, 주사위 결과, 메모만 기록한다. 카드 ID, 가상 덱, 슬롯 카드는 저장하지 않는다.
+
+주요 행동은 `roll` (주사위), `complete` (실물 카드 처리 완료와 남은 수 -1), `complete` + `keep_remaining:true` (카드 효과로 추가 카드를 받아 수 유지), `clamp_remaining` (실물 받기 더미 고갈 시 4로 낮춤), `auto_ops` + `deck_exhausted:true` (고갈 때문에 후보가 없을 때 작전값 1), `next_turn`, `note`다. 각 결과의 공개·선택·보충 지침은 `web/games/physical-pog.js`가 제공한다. 실물 카드에 대한 선택과 기본 게임 합법성은 사람이 확인한다.
+
+이전 `schema_version: 1` 게임을 열거나 가져오면 턴·남은 카드 수·행동 라운드·메모를 새 별도 게임으로 옮긴다. 기존 OPFS 파일은 덮어쓰지 않고, 가져온 전체 백업의 이전 원본도 별도로 보관한다. 이전 카드 위치와 진행 중 전투 단계는 새 헬퍼에 옮기지 않으므로 실물 카드 배치를 확인한다. 아래 내용은 호환을 위해 남긴 이전 앱·Python 서버의 계약이다.
+
 ## GitHub Pages / 정적 UI (2026-09-18)
 
 기본 UI는 `web/storage.js`를 통해 브라우저 전용 파일 저장소(OPFS)의 `<id>.json`을 저장한다. 사이트 경로별 디렉터리로 분리한다. 아래 schema_version 1 구조를 그대로 사용하며, 매 선택은 Web Locks 잠금 안에서 최신 리비전 확인 → 사본 상태 전이/검증 → `createWritable`/write/close 완료 후 성공 처리한다. localStorage에는 마지막 세션 ID만 저장한다. 사이트 데이터 삭제 시 파일도 지워지므로 전용 **JSON 내보내기** 버튼으로 백업한다.
