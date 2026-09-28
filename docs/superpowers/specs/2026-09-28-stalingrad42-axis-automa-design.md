@@ -21,7 +21,7 @@
 
 ## 결정 절차
 
-추축군 턴의 Initial → Movement → Combat → Recovery → Supply와 게임 턴의 Victory Determination을 따라간다(3.0). 초기 단계의 증원, 대체, 자원, 항공·포병 지원, 철도 관련 처리를 체크리스트로 누락 없이 안내한다. 보드에 실제로 적용한 결과를 확인한 뒤 다음 단계로 넘어간다.
+추축군 턴의 Initial → Movement → Combat → Recovery → Supply, 사람의 소련군 턴 완료 확인, 게임 턴의 Victory Determination을 따라간다(3.0). 초기 단계의 증원, 대체, 자원, 항공·포병 지원, 철도 관련 처리를 체크리스트로 누락 없이 안내한다. 보드에 실제로 적용한 결과를 확인한 뒤 다음 단계로 넘어간다.
 
 이동·전투의 정책 흐름은 아래와 같다.
 
