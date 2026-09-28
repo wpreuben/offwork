@@ -49,3 +49,17 @@ test('soviet_wins_at_turn_eight_below_eight_vp',()=>{
   assert.equal(s.winner,'soviet');
   assert.equal(s.turn,8);
 });
+test('decide_records_die_and_filters_used_units',()=>{
+  let s=advance(createSession(),1);
+  s=applySession(s,{type:'confirm',candidate:{id:'first',units:['6A'],hexes:1,action:'advance'},policyIds:['CHOOSE'],ruleRefs:['5–8']});
+  s=applySession(s,{type:'decide',die:6,candidates:[{id:'repeat',targetId:'voronezh',formationId:'6A',action:'advance',legal:true,supplied:true,encirclementRisk:'none',reserveRemaining:2,reachable:true,units:['6A'],hexes:1,combatUnit:true}]});
+  assert.equal(s.die,6);
+  assert.equal(s.decision.rejected[0].policyId,'SAFE-USED');
+});
+test('fallback_requires_verified_real_action',()=>{
+  let s=advance(createSession(),1);
+  s=applySession(s,{type:'decide',die:1,candidates:[]});
+  assert.throws(()=>applySession(s,{type:'confirm',candidate:{...s.decision.selected,action:'defend',units:[]}}),/대체 행동/);
+  s=applySession(s,{type:'confirm',candidate:{...s.decision.selected,units:['6A'],legal:true,supplied:true,encirclementRisk:'none',action:'defend'},fallbackVerified:true});
+  assert.equal(s.history.length,1);
+});

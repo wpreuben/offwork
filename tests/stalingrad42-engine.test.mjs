@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { evaluateCandidates } from '../web/stalingrad42/engine.js';
 
-const base = (id, extra={}) => ({id,targetId:'voronezh',formationId:'6A',action:'advance',legal:true,supplied:true,encirclementRisk:'none',reserveRemaining:2,reachable:true,units:['A'], ...extra});
+const base = (id, extra={}) => ({id,targetId:'voronezh',formationId:'6A',action:'advance',legal:true,supplied:true,encirclementRisk:'none',reserveRemaining:2,reachable:true,units:['A'],combatUnit:true, ...extra});
 test('missing_safety_answers_returns_questions_without_selection', () => {
   const result=evaluateCandidates({turn:2,vp:0,profile:'standard',candidates:[base('a',{supplied:undefined})],die:1});
   assert.equal(result.selected,null);
@@ -52,4 +52,24 @@ test('vp_pressure_increases_high_value_score',()=>{
   const early=evaluateCandidates({turn:2,vp:7,profile:'standard',candidates:[candidate],die:1});
   const late=evaluateCandidates({turn:7,vp:2,profile:'standard',candidates:[candidate],die:1});
   assert.ok(late.selected.score>early.selected.score);
+});
+test('missing_first_turn_distance_returns_question',()=>{
+  const result=evaluateCandidates({turn:1,vp:0,profile:'standard',candidates:[base('a',{hexes:undefined})],die:1});
+  assert.equal(result.selected,null);
+  assert.ok(result.questions.some(q=>q.includes('헥스')));
+});
+test('already_used_unit_is_rejected_before_recommendation',()=>{
+  const result=evaluateCandidates({turn:2,vp:0,profile:'standard',phase:'movement',usedUnits:['A'],candidates:[base('a')],die:1});
+  assert.equal(result.selected.action,'restore_supply');
+  assert.equal(result.rejected[0].policyId,'SAFE-USED');
+});
+test('action_in_wrong_phase_is_rejected',()=>{
+  const result=evaluateCandidates({turn:2,vp:0,profile:'standard',phase:'combat',candidates:[base('a',{action:'advance'})],die:1});
+  assert.equal(result.selected.action,'restore_supply');
+  assert.equal(result.rejected[0].policyId,'PHASE-ACTION');
+});
+test('candidate_ids_and_die_make_tie_reproducible_on_paper',()=>{
+  const candidates=[base('C001'),base('C002',{units:['B']})];
+  const result=evaluateCandidates({turn:2,vp:0,profile:'standard',phase:'movement',candidates,die:4});
+  assert.equal(result.selected.id,'C002');
 });

@@ -1,9 +1,9 @@
 import {TARGETS} from './catalog.js';
-import {PROFILES} from './policy.js';
+import {PROFILES,PHASE_ACTIONS} from './policy.js';
 
 const targets=new Map(TARGETS.map(t=>[t.id,t]));
 const fallback={id:'fallback',action:'restore_supply',targetId:null,formationId:null,policyId:'FALLBACK',ruleRefs:['18','21–23']};
-export function evaluateCandidates({turn,vp,profile,candidates,die}) {
+export function evaluateCandidates({turn,vp,profile,candidates,die,phase,usedUnits=[]}) {
   if (!Number.isInteger(turn)||turn<1||turn>8||!Number.isInteger(vp)||vp<0||!PROFILES[profile]||!Number.isInteger(die)||die<1||die>6||!Array.isArray(candidates)) throw new Error('턴·VP·난이도·후보·d6 입력 오류');
   const p=PROFILES[profile], rejected=[], questions=[], accepted=[];
   for (const c of candidates) {
@@ -15,10 +15,14 @@ export function evaluateCandidates({turn,vp,profile,candidates,die}) {
     if (!Number.isFinite(c.reserveRemaining)) missing.push('남길 예비 병력');
     if (typeof c.reachable!=='boolean') missing.push('목표 접근 가능성');
     if (!Array.isArray(c.units)||!c.units.length) missing.push('사용 유닛');
+    if (turn===1 && c.action==='advance' && typeof c.combatUnit!=='boolean') missing.push('전투 유닛 여부');
+    if (turn===1 && c.action==='advance' && c.combatUnit!==false && !Number.isFinite(c.hexes)) missing.push('첫 턴 이동 헥스 수');
     if (c.action==='attack' && (!Number.isFinite(c.attack?.odds)||!Number.isFinite(c.attack?.lossRisk))) missing.push('예상 공격 비율·손실 위험');
     if (missing.length) {questions.push(`${c.id??'후보'}: ${missing.join(', ')} 확인`);continue;}
     let policyId,rule;
-    if (turn===1 && c.combatUnit!==false && (c.units.some(u=>['14Pz','22Pz','60PzG'].some(f=>u.includes(f))) || ((c.action==='advance'||c.action==='attack') && c.hexes>2))) [policyId,rule]=['S1-FIRST-TURN','S1.2'];
+    if (phase && !PHASE_ACTIONS[phase]?.includes(c.action)) [policyId,rule]=['PHASE-ACTION','5–8, 9–16, 18, 21–23'];
+    else if (phase==='movement' && c.units.some(u=>usedUnits.includes(u))) [policyId,rule]=['SAFE-USED','5–8'];
+    else if (turn===1 && c.combatUnit!==false && (c.units.some(u=>['14Pz','22Pz','60PzG'].some(f=>u.includes(f))) || (c.action==='advance' && c.hexes>2))) [policyId,rule]=['S1-FIRST-TURN','S1.2'];
     else if (!c.legal) [policyId,rule]=['SAFE-LEGAL','5–8'];
     else if (!c.supplied) [policyId,rule]=['SAFE-SUPPLY','21–23'];
     else if (c.encirclementRisk==='high') [policyId,rule]=['SAFE-ENCIRCLE','6–7, 21–23'];
