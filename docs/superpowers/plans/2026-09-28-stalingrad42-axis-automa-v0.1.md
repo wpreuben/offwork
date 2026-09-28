@@ -46,10 +46,10 @@
 
 **Files:** Create `docs/stalingrad42/SOURCES.md`, `web/stalingrad42/catalog.js`, `tests/stalingrad42-catalog.test.mjs`.
 
-**Interfaces:** `SCENARIO`는 `{id:'s1', firstTurn:1, lastTurn:8, axisVictoryVp:8, map:'A'}`다. `TARGETS`는 고유 ID, 표시 이름, 종류(`vp_hex|east_exit|south_exit|don_bonus`), VP, 근거 규칙, 지도 헥스 또는 출구를 가진 배열이다. `calculateS1Vp(observation)`은 `{total, entries}`를 반환한다. `observation`은 `controlledVpHexes:[{id,supplied}]`, `isolatedSovietVpHexes:[id]`, `eastExit:{mechanizedSteps,sameMovementPhase,roadSupply}`, `southExit:{mechanizedSteps,sameMovementPhase,roadSupply}`, `donSouthGermanCombatUnit:boolean`을 가진다.
+**Interfaces:** `SCENARIO`는 `{id:'s1', firstTurn:1, lastTurn:8, axisVictoryVp:8, map:'A'}`다. `TARGETS`는 고유 ID, 표시 이름, 종류(`vp_hex|east_exit|south_exit|don_bonus`), VP, 근거 규칙, 지도 헥스 또는 출구를 가진 배열이다. `calculateS1Vp(observation)`은 `{total, entries}`를 반환한다. `observation`은 `controlledVpHexes:[{id,supplied}]`, `isolatedSovietVpHexes:[id]`, `eastExit:{mechanizedSteps,roadSupply}`, `southExit:{mechanizedSteps,roadSupply}`, `donSouthGermanCombatUnit:boolean`을 가진다. S1.3의 출구 보너스에는 일반 24.1.2의 동일 이동 단계 조건을 적용하지 않는다.
 
 - [ ] **Step 1:** `/home/pc/project/Stalingrad42_automa/`의 영문 규칙 3.0, 5~16, 18, 21~24, S1.1~S1.3과 지도 A·Vassal S1을 대조해 `SOURCES.md`에 목표·승점·예외의 근거를 기록한다. 한국어 번역과 불일치는 따로 적는다.
-- [ ] **Step 2:** `stalingrad42-catalog.test.mjs`에 `scenario_is_eight_turns_and_eight_vp`, `s1_target_ids_are_unique`, `isolated_uncaptured_vp_counts_once`, `exits_require_five_steps_same_phase_and_road_supply`, `don_bonus_adds_one`을 실패 테스트로 추가한다. 두 출구 조건과 Don 조건이 모두 참이면 추가 VP는 정확히 5다.
+- [ ] **Step 2:** `stalingrad42-catalog.test.mjs`에 `scenario_is_eight_turns_and_eight_vp`, `s1_target_ids_are_unique`, `isolated_uncaptured_vp_counts_once`, `exits_require_five_steps_and_road_supply`, `don_bonus_adds_one`을 실패 테스트로 추가한다. 두 출구 조건과 Don 조건이 모두 참이면 추가 VP는 정확히 5다.
 - [ ] **Step 3:** `node --test tests/stalingrad42-catalog.test.mjs`를 실행해 실패를 확인한다.
 - [ ] **Step 4:** `catalog.js`에 `SCENARIO`, `TARGETS`, `calculateS1Vp(observation)`을 구현한다. 목표 목록의 VP·헥스는 원본 지도와 S1.3에 맞춰 전사하고 서로 다른 근거를 섞지 않는다.
 - [ ] **Step 5:** 같은 테스트를 통과시키고 `git add docs/stalingrad42/SOURCES.md web/stalingrad42/catalog.js tests/stalingrad42-catalog.test.mjs && git commit -m 'Add Stalingrad 42 S1 source catalog'`로 커밋한다.
