@@ -18,15 +18,17 @@ export function evaluateCandidates({turn,vp,profile,candidates,die}) {
     if (c.action==='attack' && (!Number.isFinite(c.attack?.odds)||!Number.isFinite(c.attack?.lossRisk))) missing.push('예상 공격 비율·손실 위험');
     if (missing.length) {questions.push(`${c.id??'후보'}: ${missing.join(', ')} 확인`);continue;}
     let policyId,rule;
-    if (!c.legal) [policyId,rule]=['SAFE-LEGAL','5–8'];
+    if (turn===1 && c.combatUnit!==false && (c.units.some(u=>['14Pz','22Pz','60PzG'].some(f=>u.includes(f))) || ((c.action==='advance'||c.action==='attack') && c.hexes>2))) [policyId,rule]=['S1-FIRST-TURN','S1.2'];
+    else if (!c.legal) [policyId,rule]=['SAFE-LEGAL','5–8'];
     else if (!c.supplied) [policyId,rule]=['SAFE-SUPPLY','21–23'];
     else if (c.encirclementRisk==='high') [policyId,rule]=['SAFE-ENCIRCLE','6–7, 21–23'];
+    else if (!c.reachable && (c.action==='advance'||c.action==='attack')) [policyId,rule]=['GOAL-REACH','5–8'];
     else if (c.reserveRemaining<p.minReserve) [policyId,rule]=['SAFE-RESERVE','5–8'];
     else if (c.action==='attack' && (c.attack.odds<p.minAttackOdds||c.attack.lossRisk>p.maxLossRisk)) [policyId,rule]=['ACT-ATTACK','9–16'];
     if (policyId) {rejected.push({id:c.id,policyId,ruleRef:rule});continue;}
     const target=targets.get(c.targetId);
     const shortfall=Math.max(0,8-vp), turnsLeft=9-turn;
-    const score=target.vp*p.targetWeight+(c.reachable?shortfall*p.vpShortfallWeight/turnsLeft:0)+(c.action==='attack'?0.05:0)-(c.encirclementRisk==='low'?0.3:0);
+    const score=target.vp*p.targetWeight+(c.reachable?shortfall*p.vpShortfallWeight*target.vp/turnsLeft:0)+(c.action==='attack'?0.05:0)-(c.encirclementRisk==='low'?0.3:0);
     accepted.push({...c,score,policyId:'GOAL-VP',ruleRefs:['S1.3', c.action==='attack'?'9–16':'5–8']});
   }
   const ruleRefs=[...new Set(rejected.map(r=>r.ruleRef))];

@@ -36,3 +36,20 @@ test('no_candidates_selects_fallback', () => {
   assert.equal(result.selected.action,'restore_supply');
   assert.ok(result.policyIds.includes('FALLBACK'));
 });
+test('turn_one_restrictions_filter_before_recommendation',()=>{
+  const result=evaluateCandidates({turn:1,vp:0,profile:'standard',candidates:[base('a',{units:['14Pz'],hexes:1}),base('b',{units:['6A'],hexes:3})],die:1});
+  assert.equal(result.selected.action,'restore_supply');
+  assert.equal(result.rejected.length,2);
+  assert.ok(result.rejected.every(r=>r.policyId==='S1-FIRST-TURN'));
+});
+test('unreachable_objective_is_not_selected',()=>{
+  const result=evaluateCandidates({turn:2,vp:0,profile:'standard',candidates:[base('a',{reachable:false})],die:1});
+  assert.equal(result.selected.action,'restore_supply');
+  assert.equal(result.rejected[0].policyId,'GOAL-REACH');
+});
+test('vp_pressure_increases_high_value_score',()=>{
+  const candidate=base('a',{targetId:'voronezh'});
+  const early=evaluateCandidates({turn:2,vp:7,profile:'standard',candidates:[candidate],die:1});
+  const late=evaluateCandidates({turn:7,vp:2,profile:'standard',candidates:[candidate],die:1});
+  assert.ok(late.selected.score>early.selected.score);
+});

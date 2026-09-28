@@ -25,6 +25,6 @@ Erasmus의 전황→목표→병력 순서, Enemy Action: Kharkov의 위험 우�
 
 ## 종이판 추적 사례
 
-1. 2턴, 0VP, Voronezh 접근 후보가 합법·보급·포위 안전·예비 병력 충족이라면 `START → GOAL-VP → SAFE-INPUT → SAFE-LEGAL → SAFE-SUPPLY → SAFE-ENCIRCLE → SAFE-RESERVE → ACT-ATTACK → CHOOSE → CONFIRM`이다. 실제 헥스 이동은 영문 5–8에 따라 확인한다.
+1. 2턴, 0VP, Voronezh 접근 후보가 합법·보급·포위 안전·예비 병력 충족이라면 `START → GOAL-VP → SAFE-INPUT → S1-FIRST-TURN → SAFE-LEGAL → SAFE-SUPPLY → SAFE-ENCIRCLE → GOAL-REACH → SAFE-RESERVE → ACT-ATTACK → CHOOSE → CONFIRM`이다. 실제 헥스 이동은 영문 5–8에 따라 확인한다.
 2. 7턴, 3VP, Rostov 접근 후보가 보급 단절이라면 `SAFE-SUPPLY → NEXT`. 다른 후보가 없으면 `FALLBACK`의 보급 회복을 검토한다. 높은 VP 가치도 안전 탈락을 뒤집지 않는다.
 3. 공격 후보의 예상 비율이 선택한 난이도 기준보다 낮으면 `ACT-ATTACK → NEXT`. 다른 후보가 없다면 보급 회복→재편→방어 준비 순으로 실제 가능한 행동을 찾는다. 전투 적격성 확인과 영문 9–16의 실제 CRT 해결은 별도다.
