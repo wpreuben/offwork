@@ -17,3 +17,7 @@ test('paper_has_engine_safety_gate_ids',()=>{
   const ids=new Set(FLOW.map(node=>node.id));
   for(const id of ['SAFE-INPUT','PHASE-ACTION','SAFE-USED','S1-FIRST-TURN','SAFE-LEGAL','SAFE-SUPPLY','SAFE-ENCIRCLE','GOAL-REACH','SAFE-RESERVE','ACT-ATTACK','FALLBACK'])assert.ok(ids.has(id),id);
 });
+test('paper_explains_supply_and_all_general_vp_penalties',()=>{
+  const html=renderPaper();
+  for(const term of ['보급선이 없으면 0VP','X·Y·Z','Kharkov·Stalino','시작선 서쪽 소도시','xx31'])assert.ok(html.includes(term),term);
+});

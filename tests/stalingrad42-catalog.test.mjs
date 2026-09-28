@@ -26,3 +26,19 @@ test('don_bonus_adds_one', () => {
   const result = calculateS1Vp({eastExit:{mechanizedSteps:5,roadSupply:true},southExit:{mechanizedSteps:5,roadSupply:true},donSouthGermanCombatUnit:true});
   assert.equal(result.total, 5);
 });
+test('controlled_vp_without_axis_supply_does_not_count',()=>{
+  const result=calculateS1Vp({controlledVpHexes:[{id:'voronezh',supplied:false},{id:'rostov',supplied:true}]});
+  assert.equal(result.total,2);
+  assert.equal(result.entries.length,1);
+  assert.throws(()=>calculateS1Vp({controlledVpHexes:[{id:'usman'}]}),/보급/);
+});
+test('general_vp_penalties_apply_once_per_entry_area_and_city',()=>{
+  const result=calculateS1Vp({sovietAtAxisEntryAreas:['X','X','Z'],sovietHeldWestStartMajorCities:['kharkov'],sovietHeldWestStartMinorCityCount:2});
+  assert.equal(result.total,-11);
+  assert.equal(result.entries.filter(e=>e.vp<0).length,4);
+});
+test('unnamed_north_rail_target_uses_location_not_unverified_hex',()=>{
+  const target=TARGETS.find(t=>t.id==='north_rail_vp');
+  assert.ok(target);
+  assert.ok(!('hex' in target));
+});

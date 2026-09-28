@@ -33,7 +33,7 @@ test('undo_restores_last_confirmed_state',()=>{
 });
 test('axis_wins_at_any_victory_phase_with_eight_vp',()=>{
   let s=advance(createSession({difficulty:'hard'}),5);
-  s=applySession(s,{type:'observe',observation:{sovietTurnComplete:true, vp:{controlledVpHexes:[{id:'voronezh'},{id:'rostov'},{id:'usman'},{id:'millerovo'},{id:'salsk'},{id:'valuyki'}]}}});
+  s=applySession(s,{type:'observe',observation:{sovietTurnComplete:true, vp:{controlledVpHexes:['voronezh','rostov','usman','millerovo','salsk','valuyki'].map(id=>({id,supplied:true}))}}});
   s=applySession(s,{type:'next_phase'});
   assert.equal(s.winner,'axis');
   assert.equal(s.vp,8);
@@ -62,4 +62,11 @@ test('fallback_requires_verified_real_action',()=>{
   assert.throws(()=>applySession(s,{type:'confirm',candidate:{...s.decision.selected,action:'defend',units:[]}}),/대체 행동/);
   s=applySession(s,{type:'confirm',candidate:{...s.decision.selected,units:['6A'],legal:true,supplied:true,encirclementRisk:'none',action:'defend'},fallbackVerified:true});
   assert.equal(s.history.length,1);
+});
+test('general_penalty_prevents_premature_axis_victory',()=>{
+  let s=advance(createSession(),5);
+  s=applySession(s,{type:'observe',observation:{sovietTurnComplete:true,vp:{controlledVpHexes:['voronezh','rostov','usman','millerovo','salsk','valuyki'].map(id=>({id,supplied:true})),sovietAtAxisEntryAreas:['X']}}});
+  s=applySession(s,{type:'next_phase'});
+  assert.equal(s.vp,5);
+  assert.equal(s.winner,null);
 });

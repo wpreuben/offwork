@@ -11,7 +11,7 @@ const actionName={advance:'접근·이동',defend:'방어 준비',attack:'공격
 let store,record=null,candidates=[],candidateCounter=0;
 const notice=(message,error=false)=>{status.textContent=message;status.className=error?'error':'';};
 const targetOptions=TARGETS.map(t=>`<option value="${esc(t.id)}">${esc(t.name)} · ${t.vp}VP</option>`).join('');
-const vpChecks=name=>TARGETS.filter(t=>t.type==='vp_hex').map(t=>`<label><input type="checkbox" name="${name}" value="${esc(t.id)}">${esc(t.name)} (${t.vp})</label>`).join('');
+const vpRows=TARGETS.filter(t=>t.type==='vp_hex').map(t=>`<label>${esc(t.name)} (${t.vp}VP)<select name="vp-${esc(t.id)}" required><option value="">확인 전</option><option value="soviet">소련 점유·고립 아님</option><option value="isolated">소련 점유·고립</option><option value="axis_supplied">추축 점유·보급선 있음</option><option value="axis_unsupplied">추축 점유·보급선 없음</option></select></label>`).join('');
 const answer=(name,label)=>`<label>${label}<select name="${name}"><option value="">확인 전</option><option value="yes">예</option><option value="no">아니요</option></select></label>`;
 const asAnswer=value=>value==='yes'?true:value==='no'?false:undefined;
 const numberOrNaN=value=>value===''?NaN:Number(value);
@@ -38,7 +38,7 @@ function candidateForm(s) {
   return `<section class="panel"><p class="eyebrow">후보 만들기</p><h2>실물 보드에서 확인한 선택지</h2><form id="candidate-form"><div class="row"><label>담당 편제 <input name="formation" required placeholder="예: 6A"></label><label>사용 유닛 ID (쉼표 구분) <input name="units" required placeholder="예: 6A-1, 6A-2"></label></div><div class="row"><label>목표 <select name="target" required><option value="">목표 선택</option>${targetOptions}</select></label><label>현재 단계 행동 <select name="action">${actions}</select></label></div><div class="row"><label>이동 헥스 수 (이동 시) <input type="number" name="hexes" min="0" placeholder="실제 거리"></label><label>남길 예비 병력 수 <input type="number" name="reserve" min="0" placeholder="확인 후 입력"></label></div><div class="row"><label>포위 위험 <select name="risk"><option value="">확인 전</option><option value="none">없음</option><option value="low">낮음</option><option value="high">높음</option></select></label><label>전투 유닛 여부 <select name="combatUnit"><option value="">확인 전</option><option value="yes">전투 유닛</option><option value="no">비전투 유닛</option></select></label></div><div class="row"><label>예상 공격 비율 (공격 시) <input type="number" name="odds" min="0" step="0.1" placeholder="예: 1.5"></label><label>예상 손실 위험 0–1 (공격 시) <input type="number" name="loss" min="0" max="1" step="0.05" placeholder="예: 0.25"></label></div><div class="checks">${answer('legal','행동 합법성')}${answer('supplied','보급 유지')}${answer('reachable','목표 접근 가능성')}</div><button type="submit">후보 추가</button></form><p class="tiny">확인 전 답은 안전 검사에서 멈춥니다. 전투 적격성과 실제 전투 결과는 따로 확인합니다.</p></section>`;
 }
 function vpForm() {
-  return `<section class="panel"><p class="eyebrow">S1.3</p><h2>소련군 차례 완료 및 VP 관측</h2><form id="vp-form"><p>추축군 점령 VP 헥스</p><div class="checks">${vpChecks('controlled')}</div><p>소련 보급원에서 고립된 미점령 VP 헥스</p><div class="checks">${vpChecks('isolated')}</div><div class="row"><fieldset><legend>동쪽 출구</legend><label>기계화 스텝 <input type="number" name="eastSteps" min="0" value="0"></label><label><input type="checkbox" name="eastRoad">도로 보급</label></fieldset><fieldset><legend>남쪽 출구</legend><label>기계화 스텝 <input type="number" name="southSteps" min="0" value="0"></label><label><input type="checkbox" name="southRoad">도로 보급</label></fieldset></div><label><input type="checkbox" name="don">Don강 남쪽 독일 전투 유닛</label><label><input type="checkbox" name="vpChecked" required>지도 A의 VP 목표·출구·Don 조건을 모두 확인함</label><button type="submit">소련군 차례 완료 · VP 판정</button></form></section>`;
+  return `<section class="panel"><p class="eyebrow">S1.3 · 영문 24.1</p><h2>소련군 차례 완료 및 VP 관측</h2><p>각 VP 헥스의 점유와 보급을 확인하세요. 추축 점유라도 보급선이 없으면 득점하지 않습니다.</p><form id="vp-form"><div class="checks">${vpRows}</div><div class="row"><fieldset><legend>동쪽 출구</legend><label>기계화 스텝 <input type="number" name="eastSteps" min="0" value="0"></label><label><input type="checkbox" name="eastRoad">해당 소련 진입 구역까지 도로 보급선</label></fieldset><fieldset><legend>남쪽 출구</legend><label>기계화 스텝 <input type="number" name="southSteps" min="0" value="0"></label><label><input type="checkbox" name="southRoad">해당 소련 진입 구역까지 도로 보급선</label></fieldset></div><label><input type="checkbox" name="don">Don강 남쪽, xx31 헥스열 아래 독일 전투 유닛</label><fieldset><legend>일반 VP 감점 (24.1.4)</legend><div class="checks"><label><input type="checkbox" name="entry" value="X">X 진입 구역 인접 지도 가장자리의 소련 유닛</label><label><input type="checkbox" name="entry" value="Y">Y 진입 구역 인접 지도 가장자리의 소련 유닛</label><label><input type="checkbox" name="entry" value="Z">Z 진입 구역 인접 지도 가장자리의 소련 유닛</label><label><input type="checkbox" name="major" value="kharkov">Kharkov 소련 점유</label><label><input type="checkbox" name="major" value="stalino">Stalino 소련 점유</label></div><label>6월 28일 시작선 서쪽 소도시 중 소련 점유 수 <input type="number" name="minorCount" min="0" value="0"></label></fieldset><label><input type="checkbox" name="vpChecked" required>모든 VP·보급·출구·감점 조건을 실물 보드에서 확인함</label><button type="submit">소련군 차례 완료 · VP 판정</button></form></section>`;
 }
 function fallbackForm(s) {
   const actions=PHASE_ACTIONS[s.phase].filter(a=>a!=='advance'&&a!=='attack').map(a=>`<option value="${a}">${actionName[a]}</option>`).join('');
@@ -61,7 +61,15 @@ function formCandidate(form) {
 }
 function formVp(form) {
   const f=new FormData(form);
-  return {sovietTurnComplete:true,vp:{controlledVpHexes:f.getAll('controlled').map(id=>({id,supplied:true})),isolatedSovietVpHexes:f.getAll('isolated'),eastExit:{mechanizedSteps:Number(f.get('eastSteps')),roadSupply:f.has('eastRoad')},southExit:{mechanizedSteps:Number(f.get('southSteps')),roadSupply:f.has('southRoad')},donSouthGermanCombatUnit:f.has('don')}};
+  const controlledVpHexes=[],isolatedSovietVpHexes=[];
+  for(const target of TARGETS.filter(t=>t.type==='vp_hex')){
+    const state=f.get(`vp-${target.id}`);
+    if(!['soviet','isolated','axis_supplied','axis_unsupplied'].includes(state))throw new Error(`${target.name}의 점유·보급 상태를 확인하세요.`);
+    if(state==='isolated')isolatedSovietVpHexes.push(target.id);
+    if(state.startsWith('axis_'))controlledVpHexes.push({id:target.id,supplied:state==='axis_supplied'});
+  }
+  if(!f.has('vpChecked'))throw new Error('모든 VP 조건 확인이 필요합니다.');
+  return {sovietTurnComplete:true,vp:{controlledVpHexes,isolatedSovietVpHexes,eastExit:{mechanizedSteps:Number(f.get('eastSteps')),roadSupply:f.has('eastRoad')},southExit:{mechanizedSteps:Number(f.get('southSteps')),roadSupply:f.has('southRoad')},donSouthGermanCombatUnit:f.has('don'),sovietAtAxisEntryAreas:f.getAll('entry'),sovietHeldWestStartMajorCities:f.getAll('major'),sovietHeldWestStartMinorCityCount:Number(f.get('minorCount'))}};
 }
 root.addEventListener('submit',async event=>{
   event.preventDefault();

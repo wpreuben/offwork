@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {TARGETS} from '../web/stalingrad42/catalog.js';
 
 class Directory {
   constructor(){this.files=new Map();this.dirs=new Map();}
@@ -40,4 +41,14 @@ test('web_flow_requires_answers_preserves_die_and_clears_confirmed_candidate',as
   await click('next_phase');
   assert.ok(root.innerHTML.includes('value="attack"'));
   assert.ok(!root.innerHTML.includes('<option value="advance">'));
+  await click('next_phase');await click('next_phase');await click('next_phase');
+  assert.ok(root.innerHTML.includes('VP 관측'));
+  assert.ok(root.innerHTML.includes('일반 VP 감점'));
+  const vpFields=Object.fromEntries(TARGETS.filter(t=>t.type==='vp_hex').map(t=>[`vp-${t.id}`,'soviet']));
+  vpFields['vp-voronezh']='axis_unsupplied';
+  vpFields['vp-rostov']='axis_supplied';
+  vpFields['vp-usman']='isolated';
+  Object.assign(vpFields,{eastSteps:'0',southSteps:'0',minorCount:'0',entry:['X'],major:['kharkov'],vpChecked:'on'});
+  await handlers.submit({preventDefault(){},target:{id:'vp-form',fields:vpFields}});
+  assert.ok(root.innerHTML.includes('-3 / 8 VP'));
 });

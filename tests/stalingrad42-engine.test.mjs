@@ -73,3 +73,7 @@ test('candidate_ids_and_die_make_tie_reproducible_on_paper',()=>{
   const result=evaluateCandidates({turn:2,vp:0,profile:'standard',phase:'movement',candidates,die:4});
   assert.equal(result.selected.id,'C002');
 });
+test('negative_vp_is_valid_after_soviet_penalties',()=>{
+  const result=evaluateCandidates({turn:2,vp:-3,profile:'standard',candidates:[base('C001')],die:1});
+  assert.equal(result.selected.id,'C001');
+});

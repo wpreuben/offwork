@@ -4,7 +4,7 @@ import {PROFILES,PHASE_ACTIONS} from './policy.js';
 const targets=new Map(TARGETS.map(t=>[t.id,t]));
 const fallback={id:'fallback',action:'restore_supply',targetId:null,formationId:null,policyId:'FALLBACK',ruleRefs:['18','21–23']};
 export function evaluateCandidates({turn,vp,profile,candidates,die,phase,usedUnits=[]}) {
-  if (!Number.isInteger(turn)||turn<1||turn>8||!Number.isInteger(vp)||vp<0||!PROFILES[profile]||!Number.isInteger(die)||die<1||die>6||!Array.isArray(candidates)) throw new Error('턴·VP·난이도·후보·d6 입력 오류');
+  if (!Number.isInteger(turn)||turn<1||turn>8||!Number.isInteger(vp)||!PROFILES[profile]||!Number.isInteger(die)||die<1||die>6||!Array.isArray(candidates)) throw new Error('턴·VP·난이도·후보·d6 입력 오류');
   const p=PROFILES[profile], rejected=[], questions=[], accepted=[];
   for (const c of candidates) {
     const missing=[];
