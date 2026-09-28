@@ -23,6 +23,7 @@ jobs:
       - run: python3 scripts/build_cc_glossary.py --check
       - run: python3 scripts/check_static_rules.py
       - run: node tests/physical-pog.mjs
+      - run: node --test tests/stalingrad42-*.test.mjs
       - run: python3 scripts/build_static.py _site
       - uses: actions/upload-pages-artifact@v3
         with:
