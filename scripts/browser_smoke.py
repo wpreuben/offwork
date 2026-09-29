@@ -36,6 +36,13 @@ with tempfile.TemporaryDirectory(prefix="cdg-physical-ui-") as directory:
             expect(page.locator('a[href="./paths-of-glory.html"]')).to_be_visible()
             page.locator('a[href="./paths-of-glory.html"]').click()
             expect(page.get_by_text("실물 카드 진행 헬퍼")).to_be_visible()
+            guide = page.locator('a[href="./rules/pog_quick_rules_exceptions_persistent_hide.html"]')
+            expect(guide).to_be_visible()
+            with page.expect_popup() as popup_info:
+                guide.click()
+            popup = popup_info.value
+            expect(popup).to_have_title("Paths of Glory 실전 잔룰 · 예외룰 치트시트")
+            popup.close()
             page.get_by_role("button", name="새 게임 시작").last.click()
             page.locator('#setup-form input[name="name"]').fill("실물 카드 검증")
             page.get_by_role("button", name="헬퍼 시작").click()

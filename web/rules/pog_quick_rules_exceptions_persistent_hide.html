@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paths of Glory 실전 잔룰 · 예외룰 치트시트</title>
+<style>
+  :root{
+    --bg:#f5f1e8;
+    --paper:#fffdf8;
+    --ink:#26231f;
+    --muted:#746d63;
+    --line:#d8d0c3;
+    --accent:#8b2f2f;
+    --accent2:#2e5266;
+    --warn:#f3e4b5;
+    --danger:#f0d6d3;
+    --ok:#dce9df;
+    --shadow:0 8px 24px rgba(38,35,31,.08);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:
+      linear-gradient(rgba(255,255,255,.25),rgba(255,255,255,.25)),
+      var(--bg);
+    color:var(--ink);
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
+    line-height:1.65;
+  }
+  .wrap{max-width:1100px;margin:auto;padding:24px}
+  header{
+    background:linear-gradient(135deg,#3a3028 0%,#5a3b2b 55%,#7c3f32 100%);
+    color:#fff;
+    padding:34px 30px 30px;
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    margin-bottom:18px;
+  }
+  header h1{margin:0 0 10px;font-size:clamp(28px,5vw,48px);line-height:1.1}
+  header p{margin:0;color:#eee4d8;max-width:800px}
+  .toolbar{
+    position:sticky;top:0;z-index:20;
+    background:rgba(245,241,232,.94);
+    backdrop-filter:blur(10px);
+    padding:10px 0 12px;
+    margin-bottom:8px;
+  }
+  .search{
+    width:100%;padding:13px 15px;border:1px solid var(--line);
+    border-radius:12px;background:#fff;font-size:16px;color:var(--ink);
+  }
+  nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  nav a{
+    text-decoration:none;color:var(--accent2);background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:7px 11px;font-size:14px;
+  }
+  section{scroll-margin-top:110px;margin:28px 0}
+  section h2{
+    font-size:26px;margin:0 0 12px;padding-bottom:8px;
+    border-bottom:3px solid var(--accent);
+  }
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .card{
+    background:var(--paper);border:1px solid var(--line);border-radius:14px;
+    padding:18px;box-shadow:0 3px 12px rgba(38,35,31,.05);
+  }
+  .card h3{margin:0 0 8px;font-size:18px}
+  .rule{font-size:13px;color:var(--muted);margin-bottom:8px}
+  .card ul{margin:8px 0 0;padding-left:20px}
+  .card li{margin:5px 0}
+  .key{
+    display:inline-block;font-weight:700;color:#fff;background:var(--accent);
+    border-radius:6px;padding:1px 7px;margin-right:4px;
+  }
+  .tag{
+    display:inline-block;padding:2px 7px;border-radius:6px;background:#eee8dc;
+    color:#514a42;font-size:12px;margin-left:5px;vertical-align:1px
+  }
+  .warn{background:var(--warn);border-color:#dbc57e}
+  .danger{background:var(--danger);border-color:#d7aaa5}
+  .ok{background:var(--ok);border-color:#abc7b1}
+  .wide{grid-column:1/-1}
+  .flow{
+    display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+    font-weight:700;margin-top:10px
+  }
+  .flow span{background:#fff;border:1px solid var(--line);padding:7px 10px;border-radius:8px}
+  .arrow{color:var(--accent);font-weight:900}
+  table{width:100%;border-collapse:collapse;background:var(--paper)}
+  th,td{border:1px solid var(--line);padding:10px;vertical-align:top;text-align:left}
+  th{background:#eee8dc}
+  .small{font-size:14px;color:var(--muted)}
+  footer{
+    margin:36px 0 10px;padding:18px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:14px;
+  }
+  .hidden{display:none!important}
+  @media(max-width:760px){
+    .wrap{padding:14px}
+    header{padding:26px 20px;border-radius:14px}
+    .grid{grid-template-columns:1fr}
+    .wide{grid-column:auto}
+    table{font-size:14px}
+  }
+  @media print{
+    body{background:#fff}
+    .toolbar{display:none}
+    header{box-shadow:none}
+    .card{break-inside:avoid;box-shadow:none}
+    section{break-inside:auto}
+  }
+
+  .hide-controls{
+    display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center
+  }
+  .hide-controls button,
+  .item-hide-btn{
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    border-radius:9px;
+    cursor:pointer;
+    font:inherit;
+  }
+  .hide-controls button{padding:7px 11px;font-size:14px}
+  .hide-controls button:hover,
+  .item-hide-btn:hover{background:#f0ebe1}
+  .hidden-count{
+    font-size:13px;color:var(--muted);
+    padding:4px 8px;border-radius:999px;background:#eee8dc
+  }
+  .card,.searchable tbody tr{position:relative}
+  .item-hide-btn{
+    position:absolute;top:10px;right:10px;
+    padding:4px 8px;font-size:12px;
+    opacity:.72;
+  }
+  .card{padding-top:42px}
+  .searchable tbody td:first-child{padding-right:74px}
+  .searchable tbody tr .item-hide-btn{top:8px;right:8px}
+  .user-hidden{display:none!important}
+  body.show-user-hidden .user-hidden{
+    display:block!important;
+    opacity:.48;
+    filter:grayscale(.25);
+  }
+  body.show-user-hidden .searchable tbody tr.user-hidden{
+    display:table-row!important;
+  }
+  body.show-user-hidden .user-hidden::after{
+    content:"숨김";
+    position:absolute;left:10px;top:10px;
+    font-size:11px;font-weight:700;color:var(--muted);
+    background:#eee8dc;border-radius:999px;padding:2px 7px;
+  }
+  body.show-user-hidden .searchable tbody tr.user-hidden::after{content:none}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Paths of Glory<br>실전 잔룰 · 예외룰</h1>
+  <p>기본 진행을 아는 플레이어가 실제 플레이 중 자주 멈추는 부분만 모은 치트시트입니다. 규칙 설명은 한국어 룰북의 용어와 규칙 번호를 기준으로 정리했습니다.</p>
+</header>
+
+<div class="toolbar">
+  <input id="search" class="search" type="search" placeholder="검색: 활성화, 후퇴, 영대원, 근동, 보급, 요새...">
+  <nav>
+    <a href="#activation">활성화</a>
+    <a href="#combat">전투</a>
+    <a href="#loss">손실·후퇴</a>
+    <a href="#supply">보급</a>
+    <a href="#sr">전략 재배치</a>
+    <a href="#fort">요새</a>
+    <a href="#national">국가별 예외</a>
+    <a href="#turn">턴·카드</a>
+  </nav>
+
+  <div class="hide-controls">
+    <button id="toggleHidden" type="button">숨긴 항목 보기</button>
+    <button id="resetHidden" type="button">숨김 초기화</button>
+    <span id="hiddenCount" class="hidden-count">숨김 0개</span>
+  </div>
+</div>
+
+<section id="activation">
+<h2>1. 활성화 · 이동</h2>
+<div class="grid">
+
+<div class="card">
+<h3>활성화 비용의 기본</h3>
+<div class="rule">9.2.2 ~ 9.2.6</div>
+<ul>
+<li>한 칸의 활성화 비용은 기본적으로 <b>그 칸에 있는 국가 수</b>입니다.</li>
+<li>일부 유닛이 실제로 이동·공격하지 않아도 국가 수 계산에는 포함됩니다.</li>
+<li>한 칸은 <b>이동 또는 전투 중 하나</b>로만 활성화합니다.</li>
+<li>아군 요새만 있는 칸은 점유된 칸으로 보지 않으므로 활성화할 수 없습니다.</li>
+<li>OOS 유닛이 섞여 있어도 국가 수에는 포함되지만, 그 OOS 유닛 자체는 이동·공격하지 못합니다.</li>
+</ul>
+</div>
+
+<div class="card ok">
+<h3>활성화 비용에서 같은 국가로 치는 예외</h3>
+<div class="rule">9.2.3</div>
+<ul>
+<li><b>영국 + 호주 + 캐나다 + 포르투 + 아랍북</b> → 활성화 비용 계산 시 영국 1국가.</li>
+<li><b>앤트워프·오스텐트·칼레·아미앵</b>의 벨기에 유닛 → 영국으로 취급 가능.</li>
+<li><b>프랑스 + 미국</b> → 프랑스 또는 독일 지역에서 1국가로 취급 가능.</li>
+<li><b>세누시 = 터키</b>, <b>몬테네그로 = 세르비아</b>.</li>
+<li>독일 남부군·11군은 해당 이벤트 카드가 지정한 다국적 더미에서 별도 예외가 있습니다.</li>
+</ul>
+</div>
+
+<div class="card danger wide">
+<h3>중요: “같은 국가 취급”은 모든 규칙에 공통이 아닙니다</h3>
+<div class="rule">9.2.3 / 12.1.11</div>
+<p>활성화 비용에서 같은 국가로 쳐도, 다국적 공격에서는 별도 판정을 합니다. 예를 들어 특정 지역의 <b>영국+벨기에</b>는 1 OPS로 활성화할 수 있지만, 다국적 공격에서는 벨기에를 영국으로 보지 않습니다.</p>
+<p>반면 다국적 공격에서는 <b>아랍북·호주·캐나다·포르투 = 영국</b>, <b>세누시 = 터키</b>, <b>몬테네그로 = 세르비아</b>로 인정됩니다.</p>
+</div>
+
+<div class="card">
+<h3>차르의 퇴위 이후 러시아</h3>
+<div class="rule">9.2.2</div>
+<p>러시아 유닛이 있는 칸은 <b>이동 활성화 비용은 정상</b>이지만, <b>전투 활성화는 유닛당 1 OPS</b>가 필요합니다.</p>
+</div>
+
+<div class="card">
+<h3>이동 중 자주 놓치는 것</h3>
+<div class="rule">11.1</div>
+<ul>
+<li>모든 칸의 이동 비용은 기본 1입니다.</li>
+<li>공격 마커가 놓인 칸은 통과 가능하지만 <b>그 칸에서 이동 종료 불가</b>.</li>
+<li>적 전투 유닛이 있는 칸에는 이동으로 진입할 수 없습니다.</li>
+<li>점선은 이동뿐 아니라 공격·후퇴·전진·SR·보급에도 국가 제한을 줍니다.</li>
+<li>이동 중에는 일시적으로 쌓기 제한을 넘을 수 있지만 종료 시에는 3유닛 이하이어야 합니다.</li>
+</ul>
+</div>
+
+</div>
+</section>
+
+<section id="combat">
+<h2>2. 전투 · 다국적 공격 · 측면공격</h2>
+<div class="grid">
+
+<div class="card">
+<h3>다국적 공격의 공용 공격 칸</h3>
+<div class="rule">12.1.11 ~ 12.1.11.2</div>
+<p>여러 칸에서 서로 다른 국적의 유닛이 한 전투에 참여하려면, 공격 칸 중 하나가 <b>공용 공격 칸</b>이어야 합니다. 즉 그 칸에 이번 공격에 참여하는 모든 국가의 유닛이 최소 하나씩 있어야 합니다.</p>
+<p class="small">쌓기 제한 때문에 한 전투에 한 진영 최대 3개 국가까지만 참여할 수 있습니다.</p>
+</div>
+
+<div class="card">
+<h3>런던에서 단독 공격 불가</h3>
+<div class="rule">12.1.10</div>
+<p>런던의 유닛은 프랑스 또는 벨기에에 있는 아군 유닛이 같은 전투에 함께 참여할 때만 공격할 수 있습니다.</p>
+</div>
+
+<div class="card">
+<h3>측면공격 조건</h3>
+<div class="rule">12.3.1</div>
+<ul>
+<li>둘 이상의 칸에서 공격.</li>
+<li>공격 유닛 중 <b>군(Army) 최소 1개</b>.</li>
+<li>방어 칸이 산·습지가 아니어야 함.</li>
+<li>참호가 없어야 함.</li>
+<li>점유되지 않은 요새만 있는 칸에도 측면공격 불가.</li>
+</ul>
+</div>
+
+<div class="card warn">
+<h3>전투 승패는 실제 단계 손실이 아니라 Loss Number</h3>
+<div class="rule">12.2.11</div>
+<p>누가 몇 단계를 실제로 잃었는지가 아니라 <b>서로 상대에게 낸 손실 숫자</b>를 비교합니다. 더 높은 손실 숫자를 낸 쪽이 승리하며, 동률이면 양측 모두 패배한 것으로 처리합니다.</p>
+</div>
+
+<div class="card wide">
+<h3>전투 처리 순서</h3>
+<div class="rule">12.2.1</div>
+<div class="flow">
+<span>전투 지정</span><b class="arrow">→</b>
+<span>전투력</span><b class="arrow">→</b>
+<span>참호 무효화 카드</span><b class="arrow">→</b>
+<span>측면공격</span><b class="arrow">→</b>
+<span>전투 카드</span><b class="arrow">→</b>
+<span>DRM</span><b class="arrow">→</b>
+<span>사격열</span><b class="arrow">→</b>
+<span>결과</span><b class="arrow">→</b>
+<span>손실</span><b class="arrow">→</b>
+<span>승자</span><b class="arrow">→</b>
+<span>후퇴</span><b class="arrow">→</b>
+<span>전진</span>
+</div>
+</div>
+
+</div>
+</section>
+
+<section id="loss">
+<h2>3. 손실 · 후퇴 · 전진</h2>
+<div class="grid">
+
+<div class="card warn">
+<h3>손실은 가능한 최대치까지 적용</h3>
+<div class="rule">12.4.1 ~ 12.4.4</div>
+<ul>
+<li>손실 숫자를 넘지 않는 범위에서 <b>가능한 최대 손실</b>을 적용해야 합니다.</li>
+<li>더 많은 손실을 적용할 수 있는데 일부러 적게 받을 수 없습니다.</li>
+<li>군이 제거되어 군단으로 대체되면 <b>남은 Loss를 그 군단에도 계속 적용</b>할 수 있습니다.</li>
+</ul>
+</div>
+
+<div class="card danger">
+<h3>군 제거 → Reserve 군단 대체</h3>
+<div class="rule">12.4.4</div>
+<ul>
+<li>축소 전력의 군이 제거되면 Reserve Box의 <b>같은 국가 군단</b>으로 즉시 교체합니다.</li>
+<li>최대 전력 군단 우선, 없으면 축소 전력 군단도 사용 가능합니다.</li>
+<li>같은 국가 군단이 Reserve Box에 하나도 없으면 <b>그 군은 영구 제거</b>됩니다.</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>영국계 손실 우선순위</h3>
+<div class="rule">12.4.5</div>
+<p>공격에 영국계 특수 유닛이 포함되면 손실 선택이 완전히 자유롭지 않습니다.</p>
+<p><b>영대원 군 → 영대원 군단 → 영지원 군 → 호주/캐나다 군단</b></p>
+<p>러시아 코카서 군도 공격에 참여하면 별도 손실 우선순위가 적용됩니다.</p>
+</div>
+
+<div class="card">
+<h3>후퇴 거리</h3>
+<div class="rule">12.5.1 ~ 12.5.3</div>
+<ul>
+<li>공격자가 승리하고 최대 전력 공격 유닛이 하나라도 남으면 방어자가 후퇴합니다.</li>
+<li>Loss Number 차이가 <b>1 → 1칸</b>.</li>
+<li>그 외의 승리 → <b>2칸</b>.</li>
+<li>동률이면 후퇴하지 않습니다.</li>
+<li>공격자는 전투 결과 때문에 후퇴하지 않습니다.</li>
+</ul>
+</div>
+
+<div class="card ok">
+<h3>지형에서 후퇴를 손실로 버티기</h3>
+<div class="rule">12.5.3</div>
+<p>참호·숲·사막·산·습지의 방어 유닛은 <b>추가 1단계 손실</b>을 받아 후퇴 전체를 취소할 수 있습니다. 단, 그 추가 손실 후에도 최소 한 단계의 방어 유닛이 살아남아야 합니다.</p>
+</div>
+
+<div class="card danger">
+<h3>후퇴 불가로 제거된 군은 특히 위험</h3>
+<div class="rule">12.5.4</div>
+<p>후퇴할 수 없어 제거된 군은 <b>영구 제거</b>이며, 이 경우에는 Reserve Box의 군단으로 대체하지도 않습니다.</p>
+</div>
+
+<div class="card">
+<h3>후퇴 경로 우선순위</h3>
+<div class="rule">12.5.5</div>
+<ol>
+<li>아군 제어 + 보급 가능</li>
+<li>아군 제어 + 보급 불가</li>
+<li>적 제어 + 보급 가능</li>
+<li>적 제어 + 보급 불가</li>
+</ol>
+<p class="small">적 유닛·포위되지 않은 적 요새 칸으로는 후퇴할 수 없고, 원래 방어 칸으로 되돌아갈 수도 없습니다.</p>
+</div>
+
+<div class="card">
+<h3>전진</h3>
+<div class="rule">12.2.13</div>
+<p>방어자가 후퇴하거나 완전히 제거되면 공격자의 <b>남아 있는 최대 전력 유닛</b>들이 전진할 수 있습니다. 축소 전력만 남으면 전진하지 못합니다.</p>
+</div>
+
+</div>
+</section>
+
+<section id="supply">
+<h2>4. 보급 · OOS</h2>
+<div class="grid">
+
+<div class="card">
+<h3>보급은 여러 번 확인합니다</h3>
+<div class="rule">14.1.1</div>
+<ul>
+<li>활성화할 때.</li>
+<li>실제 이동을 시작할 때.</li>
+<li>각 전투를 해결하기 시작할 때.</li>
+</ul>
+<p>같은 라운드의 앞선 전투·후퇴·전진 때문에 보급이 끊기면 뒤에 예정된 공격이 취소될 수 있습니다.</p>
+</div>
+
+<div class="card danger">
+<h3>OOS는 즉시 제거가 아닙니다</h3>
+<div class="rule">14.3.5 ~ 14.3.6</div>
+<p>보급이 끊겼다고 즉시 죽지는 않지만 행동 제한이 생깁니다. <b>소모 페이즈까지 OOS이면 제거</b>되며, OOS 군은 영구 제거됩니다.</p>
+<p>양측 OOS 제거는 동시에 처리하므로 상대가 먼저 없어져 내 보급이 살아나는 식으로 처리하지 않습니다.</p>
+</div>
+
+<div class="card ok">
+<h3>상시 보급 예외</h3>
+<div class="rule">14.1.5</div>
+<ul>
+<li>세르비아 유닛은 세르비아 안에서 항상 보급 상태.</li>
+<li>몬테네그로, 영국 아랍북, 터키 세누시는 규칙에 지정된 범위에서 상시 보급.</li>
+<li>요새는 보급이 필요하지 않습니다.</li>
+<li>메디나의 터키 유닛에도 별도 특별 보급 규칙이 있습니다.</li>
+</ul>
+</div>
+
+</div>
+</section>
+
+<section id="sr">
+<h2>5. 전략 재배치(SR) · 재편(RP)</h2>
+<div class="grid">
+
+<div class="card">
+<h3>SR 연속 사용 금지</h3>
+<div class="rule">9.3.3</div>
+<p>자신의 직전 행동 라운드에 SR을 했다면 다음 자기 행동에 또 SR을 할 수 없습니다. 단, 한 턴의 마지막 AR에서 SR 후 다음 턴 AR1에 SR은 가능합니다.</p>
+</div>
+
+<div class="card">
+<h3>RP도 연속 사용 금지</h3>
+<div class="rule">9.4.2 ~ 9.4.4</div>
+<p>RP 카드 사용 라운드는 점수 적립만 하고 끝납니다. 바로 직전 자기 행동이 RP였다면 또 RP를 사용할 수 없습니다. 적립한 RP는 재편 페이즈에 사용하고 남은 점수는 사라집니다.</p>
+</div>
+
+<div class="card">
+<h3>수도 상실과 Reserve Box</h3>
+<div class="rule">13.1.11 / 17.1.3</div>
+<p>적이 수도를 제어하거나 포위하면 보통 해당 국가 군단의 Reserve Box 출입과 RP 사용이 제한됩니다.</p>
+<p><b>벨기에와 세르비아는 이 제한의 예외</b>입니다.</p>
+</div>
+
+<div class="card">
+<h3>미국 군단의 특별 SR</h3>
+<div class="rule">13.1.8</div>
+<p>미국 군단은 Reserve Box에서 <b>연합군이 제어하는 프랑스 항구</b>로 SR할 수 있으며, 그 칸에 미국 유닛이 이미 있을 필요가 없습니다.</p>
+</div>
+
+<div class="card">
+<h3>해상 SR</h3>
+<div class="rule">13.1.7</div>
+<ul>
+<li><b>군은 해상 SR 불가</b>.</li>
+<li>러시아는 해상 SR 불가.</li>
+<li>연합군이 콘스탄티노플을 해상 SR에 사용하려면 갈리폴리 제어가 필요합니다.</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>근동 SR 제한</h3>
+<div class="rule">13.2</div>
+<ul>
+<li>러시아 군단은 턴당 하나만 근동 출입 SR 가능. 군은 불가.</li>
+<li>영국/호주 군단의 근동 출입에도 턴당 제한이 있습니다.</li>
+<li>터키는 동맹군의 일반적인 근동 출입 제한에서 예외입니다.</li>
+<li>아랍북은 Reserve Box로 SR할 수 없고 해상 SR로 근동을 떠날 수도 없습니다.</li>
+</ul>
+</div>
+
+</div>
+</section>
+
+<section id="fort">
+<h2>6. 요새 · 포위 · 공성</h2>
+<div class="grid">
+
+<div class="card">
+<h3>요새는 유닛이 아닙니다</h3>
+<div class="rule">15.1</div>
+<ul>
+<li>쌓기 3개 제한에 포함되지 않습니다.</li>
+<li>방어할 때만 전투력을 더합니다.</li>
+<li>포위되더라도 파괴되지 않은 한 그 칸의 제어권과 VP는 원 소유자에게 남습니다.</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>포위 조건</h3>
+<div class="rule">15.2.1</div>
+<p>적 요새를 포위하려면 <b>군 1개</b> 또는 <b>요새 LR 이상 개수의 군단</b>이 한 행동 라운드에 들어가 이동을 멈춰야 합니다.</p>
+</div>
+
+<div class="card">
+<h3>포위 유지 병력은 빼면 안 됩니다</h3>
+<div class="rule">15.2.3 ~ 15.2.4</div>
+<p>포위한 칸의 병력 중 포위에 필요한 최소 병력은 사실상 묶입니다. 일부를 빼서 라운드 종료 시 포위 조건 미달 상태로 남겨둘 수 없습니다.</p>
+</div>
+
+<div class="card warn">
+<h3>공성 성공 조건</h3>
+<div class="rule">15.3.1 ~ 15.3.3</div>
+<p>공성 페이즈마다 포위 요새에 주사위를 굴려 <b>주사위 결과가 요새 LR보다 커야</b> 항복합니다. 같으면 실패입니다.</p>
+<p>1턴과 2턴에는 공성 주사위에 <b>-2</b>가 적용됩니다.</p>
+</div>
+
+<div class="card">
+<h3>러시아 요새 관련 1턴·독일 제한</h3>
+<div class="rule">15.1.11 ~ 15.1.12</div>
+<ul>
+<li>러시아는 1턴에 독일 요새를 공격·진입·포위할 수 없습니다.</li>
+<li>독일은 일정 조건 전까지 러시아 요새를 공격할 수 없지만, 점유되지 않은 러시아 요새는 포위할 수 있습니다.</li>
+</ul>
+</div>
+
+</div>
+</section>
+
+<section id="national">
+<h2>7. 국가별·지역별 예외 요약</h2>
+
+<table class="searchable">
+<thead><tr><th>국가/유닛</th><th>자주 걸리는 예외</th></tr></thead>
+<tbody>
+<tr><td><b>영국</b></td><td>영대원은 배치 지역 제한. 영대원 군단과 일반 영국 군단은 서로 대체 불가. 런던 단독 공격 불가.</td></tr>
+<tr><td><b>호주·캐나다·포르투·아랍북</b></td><td>활성화·다국적 공격에서는 영국 취급. 재편은 연합군 RP 사용. 영국군 대체 군단으로는 사용 불가. 영국 의무공격도 충족하지 못함.</td></tr>
+<tr><td><b>벨기에</b></td><td>앤트워프·오스텐트·칼레·아미앵에서 영국과 함께 있으면 활성화 비용을 1국가로 처리 가능. 다국적 공격에서는 영국 취급 아님. 수도 상실 관련 SR/RP 제한의 예외.</td></tr>
+<tr><td><b>프랑스 + 미국</b></td><td>프랑스·독일 지역에서 활성화 비용 계산 시 1국가로 취급 가능.</td></tr>
+<tr><td><b>러시아</b></td><td>차르 퇴위 후 전투 활성화는 유닛당 1 OPS. 해상 SR 불가. 근동 출입 제한. 1턴 독일 요새 공격·진입·포위 불가.</td></tr>
+<tr><td><b>세르비아</b></td><td>세르비아 내 상시 보급. 수도 상실 시에도 SR/RP 관련 예외. 군 재생성 위치에도 별도 규칙.</td></tr>
+<tr><td><b>몬테네그로</b></td><td>활성화·다국적 공격에서 세르비아 취급. 상시 보급. 이동·전진·후퇴 불가. 육로 SR 불가, Reserve Box↔체티네 SR 가능.</td></tr>
+<tr><td><b>세누시</b></td><td>활성화·다국적 공격·점선에서 터키 취급. 그러나 터키 의무공격은 충족할 수 없고 일부 터키 전투 카드도 사용할 수 없음.</td></tr>
+<tr><td><b>근동</b></td><td>연합군은 일반적으로 행동 라운드당 근동의 전투 활성화 1칸 제한. 러시아·영국·동맹군의 근동 출입에 별도 SR 제한 다수.</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="turn">
+<h2>8. 턴 · 카드 · 의무공격</h2>
+<div class="grid">
+
+<div class="card">
+<h3>* 카드의 제거</h3>
+<div class="rule">9.5.1.2</div>
+<p>카드 이름 옆에 *가 있어도 OPS/SR/RP로 사용하면 제거되지 않습니다. <b>이벤트로 사용했을 때만</b> 해당 행동 라운드 종료 후 게임에서 제거됩니다.</p>
+</div>
+
+<div class="card">
+<h3>전투 카드 유지</h3>
+<div class="rule">9.5.4</div>
+<p>전투에서 승리하면 사용한 전투 카드를 앞에 유지할 수 있는 경우가 있습니다. 패배하면 버리고, 동률도 패배 취급입니다. 유지된 카드도 턴 종료 시에는 버립니다.</p>
+</div>
+
+<div class="card">
+<h3>의무공격</h3>
+<div class="rule">7.1</div>
+<ul>
+<li>지정 국가는 그 턴에 조건에 맞는 적 전투 유닛을 최소 한 번 공격해야 합니다.</li>
+<li>못 하면 VP 페널티.</li>
+<li>영국·프랑스·독일은 인정되는 전선/상대 조건이 따로 있습니다.</li>
+<li>호주·캐나다·포르투·아랍북은 영국 의무공격을 충족하지 못합니다.</li>
+<li>세누시는 터키 의무공격을 충족하지 못합니다.</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>중립국 참전 이벤트</h3>
+<div class="rule">9.5.2</div>
+<p>불가리아·그리스·이탈리아·루마니아의 중립국 참전 이벤트는 <b>턴당 총 1장</b>만 사용할 수 있습니다. 진영별 1장이 아니라 양측 합쳐 1장 제한입니다.</p>
+</div>
+
+<div class="card wide warn">
+<h3>실전 전투 체크 순서</h3>
+<div class="flow">
+<span>보급 확인</span><b class="arrow">→</b>
+<span>전투력·사격표</span><b class="arrow">→</b>
+<span>Loss Number</span><b class="arrow">→</b>
+<span>가능한 최대 손실 적용</span><b class="arrow">→</b>
+<span>군 제거 시 Reserve 군단</span><b class="arrow">→</b>
+<span>승패 비교</span><b class="arrow">→</b>
+<span>후퇴 여부</span><b class="arrow">→</b>
+<span>최대 전력 공격자 전진</span>
+</div>
+</div>
+
+</div>
+</section>
+
+<footer>
+<p><b>출처:</b> 「패스 오브 글로리」 한국어 규칙서. 주요 참조: 7.0 의무 공격, 9.2 활성화, 10.0 쌓기, 11.0 이동, 12.0 전투, 13.0 전략 재배치, 14.0 보급, 15.0 요새, 17.0 재편, 국가별 예외와 특수 규칙 요약.</p>
+<p>이 문서는 플레이 중 빠르게 확인하기 위한 치트시트이며, 카드 개별 효과와 시나리오 특수 규칙은 해당 카드/룰북 원문을 우선합니다.</p>
+</footer>
+</div>
+
+<script>
+const STORAGE_KEY = 'pog-cheatsheet-hidden-v1';
+const SHOW_KEY = 'pog-cheatsheet-show-hidden-v1';
+
+const q = document.getElementById('search');
+const toggleHiddenBtn = document.getElementById('toggleHidden');
+const resetHiddenBtn = document.getElementById('resetHidden');
+const hiddenCount = document.getElementById('hiddenCount');
+
+const cards = [...document.querySelectorAll('.card')];
+const rows = [...document.querySelectorAll('.searchable tbody tr')];
+const items = [...cards, ...rows];
+
+function getStoredHidden(){
+  try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+
+let hiddenKeys = getStoredHidden();
+let showHidden = localStorage.getItem(SHOW_KEY) === '1';
+
+function assignKeysAndButtons(){
+  document.querySelectorAll('section').forEach(section => {
+    const sectionId = section.id || 'section';
+    [...section.querySelectorAll('.card')].forEach((el, i) => {
+      el.dataset.hideKey = `${sectionId}-card-${i}`;
+    });
+    [...section.querySelectorAll('.searchable tbody tr')].forEach((el, i) => {
+      el.dataset.hideKey = `${sectionId}-row-${i}`;
+    });
+  });
+
+  items.forEach(el => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'item-hide-btn';
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const key = el.dataset.hideKey;
+      if (hiddenKeys.has(key)) hiddenKeys.delete(key);
+      else hiddenKeys.add(key);
+      persist();
+      render();
+    });
+    el.appendChild(btn);
+  });
+}
+
+function persist(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...hiddenKeys]));
+}
+
+function matchesSearch(el){
+  const term = q.value.trim().toLowerCase();
+  if (!term) return true;
+  const clone = el.cloneNode(true);
+  clone.querySelectorAll('.item-hide-btn').forEach(b => b.remove());
+  return clone.innerText.toLowerCase().includes(term);
+}
+
+function render(){
+  document.body.classList.toggle('show-user-hidden', showHidden);
+  localStorage.setItem(SHOW_KEY, showHidden ? '1' : '0');
+
+  let count = 0;
+  items.forEach(el => {
+    const key = el.dataset.hideKey;
+    const isHidden = hiddenKeys.has(key);
+    if (isHidden) count++;
+
+    el.classList.toggle('user-hidden', isHidden);
+    el.classList.toggle('hidden', !matchesSearch(el));
+
+    const btn = el.querySelector('.item-hide-btn');
+    if (btn) {
+      btn.textContent = isHidden ? '복원' : '숨기기';
+      btn.title = isHidden ? '이 항목을 다시 표시합니다' : '외운 항목을 숨깁니다';
+    }
+  });
+
+  hiddenCount.textContent = `숨김 ${count}개`;
+  toggleHiddenBtn.textContent = showHidden ? '숨긴 항목 가리기' : '숨긴 항목 보기';
+}
+
+q.addEventListener('input', render);
+
+toggleHiddenBtn.addEventListener('click', () => {
+  showHidden = !showHidden;
+  render();
+});
+
+resetHiddenBtn.addEventListener('click', () => {
+  if (!hiddenKeys.size) return;
+  if (confirm('숨긴 항목을 모두 다시 표시할까요?')) {
+    hiddenKeys.clear();
+    persist();
+    render();
+  }
+});
+
+assignKeysAndButtons();
+render();
+</script>
+</body>
+</html>

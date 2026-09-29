@@ -38,6 +38,7 @@
 @media(max-width:650px){.track-marker .marker-label{display:none}.track-marker{font-size:8px}.board-meters .limit{font-size:10px}}
 
 /* Physical card helper: the real display stays on the table. */
+.sidebar a.nav-item{text-decoration:none}
 .physical-welcome{text-align:center;max-width:700px;margin:30px auto;padding:48px 24px}.physical-welcome p{max-width:440px;margin:0 auto 24px;color:var(--muted)}.welcome-die{font-size:48px;color:var(--gold)}
 .physical-status{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:7px;overflow:hidden;margin-bottom:16px}.physical-status>div{background:var(--panel);padding:16px 22px}.physical-status span{display:block;font-size:10px;color:var(--muted);margin-bottom:6px}.physical-status strong{font-size:19px;font-weight:600}
 .physical-meters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px}.physical-meter{border:1px solid var(--line);border-radius:7px;background:var(--panel);padding:16px 20px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:3px}.physical-meter.active{border-color:var(--gold);box-shadow:0 0 0 2px #b5955922}.physical-meter.cp{border-left:5px solid var(--cp)}.physical-meter.ap{border-left:5px solid var(--ap)}.meter-name{font-size:15px;font-weight:600}.physical-meter strong{grid-row:span 2;font-family:Georgia,serif;font-size:37px}.physical-meter strong small{font:12px Inter,sans-serif;color:var(--muted)}.meter-round{font-size:10px;color:var(--muted)}
