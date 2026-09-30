@@ -6,6 +6,18 @@ const group={id:'6A',unitIds:['6A-1','6A-2','14Pz'],protectedUnitIds:[],kind:'mo
 const objective={control:'soviet',eta:0,supplySecure:true,forceReady:true,counterattack:'none'};
 const apply=(s,...actions)=>actions.reduce((x,a)=>applyV2Action(x,a),s);
 const planned=()=>apply({...createV2Session(),phase:'movement'},{type:'set_group',group},{type:'set_objective',id:'usman',observation:objective},{type:'review_board'},{type:'plan',die:1});
+test('1턴 고정 유닛만 있는 전투단 대신 실제 가용 병력을 주공으로 배정한다',()=>{
+  const s=apply({...createV2Session(),phase:'movement'},{type:'set_group',group:{...group,id:'frozen',unitIds:['14Pz'],targetDistances:{usman:0}}},{type:'set_group',group:{...group,unitIds:['6A-1']}},{type:'set_objective',id:'usman',observation:objective},{type:'review_board'},{type:'plan',die:1});
+  assert.equal(s.plan.missions.find(m=>m.kind==='attack').groupId,'6A');
+});
+test('구형 기록의 ETA는 가져온 턴을 관측 턴으로 보존하고 이후 경과한다',()=>{
+  const old={...createV2Session(),policyVersion:'0.2.0',turn:2,objectiveStates:{usman:{...objective,eta:1}},threats:[{id:'cut',kind:'supply',eta:1,severity:'critical',actionable:true,affectedGroupId:'6A'}],groups:[group]};
+  let s=sessions.upgradeV2Session(old);
+  assert.equal(s.objectiveStates.usman.observedTurn,2);assert.equal(s.threats[0].observedTurn,2);
+  s=apply({...s,turn:3},{type:'review_board'},{type:'plan',die:1});
+  assert.equal(s.plan.threat.eta,0);
+  assert.equal(s.history.at(-1).snapshot.input.objectiveStates.usman.eta,0);
+});
 test('위협이 연결된 전투단은 위협을 먼저 제거해야 삭제할 수 있다',()=>{
   const s=apply(planned(),{type:'set_threats',threats:[{id:'cut',kind:'supply',eta:0,severity:'critical',actionable:true,affectedGroupId:'6A'}]});
   assert.throws(()=>applyV2Action(s,{type:'remove_group',id:'6A'}),/위협/);

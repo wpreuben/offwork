@@ -2,6 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {renderV2Landing,renderV2Game} from '../web/stalingrad42/view-v2.js';
 import {createV2Session,applyV2Action} from '../web/stalingrad42/session-v2.js';
+test('각 전투단에 돌파 판단 버튼과 해당 전투단 ID를 표시한다',()=>{
+  const s={...createV2Session(),phase:'combat',plan:{kind:'consolidate',ruleRefs:[],missions:[{groupId:'A',kind:'screen',unitIds:['A-1']},{groupId:'B',kind:'screen',unitIds:['B-1']}]}};
+  const html=renderV2Game(s);
+  for(const id of ['A','B'])assert.ok(html.includes(`data-kind="breakthrough" data-group-id="${id}"`));
+});
 
 test('landing presents version 2 paper, unmeasured win targets and legacy export path',()=>{
   const html=renderV2Landing([]);

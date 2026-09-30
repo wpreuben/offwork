@@ -24,6 +24,8 @@ export function upgradeV2Session(state){
   if(state.policyVersion!==DOCTRINE_VERSION){
     s.policyVersion=DOCTRINE_VERSION;s.plan=null;s.pending=null;s.boardReviewedTurn=0;s.doneGroups=[];
     s.lastVpControls=controls(s);
+    for(const o of Object.values(s.objectiveStates))o.observedTurn??=s.turn;
+    for(const t of s.threats)t.observedTurn??=s.turn;
     s.history.push({type:'policy_upgrade',turn:s.turn,from:state.policyVersion,to:DOCTRINE_VERSION});
   }
   return s;
@@ -32,7 +34,8 @@ export function upgradeV2Session(state){
 export function replayV2Plan(snapshot){
   if(snapshot?.policyVersion!==DOCTRINE_VERSION)throw new Error('이 정책 버전의 재현 스냅샷이 필요합니다.');
   const plan=planAxisTurn({...clone(snapshot.input),profilePolicy:snapshot.parameters.doctrine});
-  return {...plan,missions:allocateMissions({plan,groups:snapshot.groups,profile:snapshot.input.profile,profilePolicy:snapshot.parameters.doctrine})};
+  const groups=snapshot.groups.map(g=>({...g,unitIds:g.unitIds.filter(id=>snapshot.input.turn!==1||!frozen(id))}));
+  return {...plan,missions:allocateMissions({plan,groups,profile:snapshot.input.profile,profilePolicy:snapshot.parameters.doctrine})};
 }
 
 function groupInput(group,others){
@@ -44,7 +47,7 @@ function groupInput(group,others){
 }
 
 function planningInput(s,die){
-  const observations=Object.fromEntries(Object.entries(s.objectiveStates).map(([id,o])=>[id,{...o,eta:age(o,s.turn),forceReady:o.forceReady&&s.groups.some(g=>g.ready&&g.supplied&&!g.guardCritical&&(g.targetDistances[id]??99)<99&&orderedMissionUnits(g).length)}]));
+  const observations=Object.fromEntries(Object.entries(s.objectiveStates).map(([id,o])=>[id,{...o,eta:age(o,s.turn),forceReady:o.forceReady&&s.groups.some(g=>g.ready&&g.supplied&&!g.guardCritical&&(g.targetDistances[id]??99)<99&&orderedMissionUnits(g).some(unit=>s.turn!==1||!frozen(unit)))}]));
   return {turn:s.turn,vp:s.vp+score(controls(s))-score(s.lastVpControls),profile:s.difficulty,currentGoal:s.currentGoal,objectiveStates:observations,threats:s.threats.map(t=>({...t,eta:age(t,s.turn)})),die};
 }
 
@@ -63,7 +66,7 @@ function startDecision(s,action){
     if(action.kind==='attack'&&ATTACK_POLICY[s.difficulty].maxSupportCommitted===0)facts.supportCanFixOdds=false;
   }
   let result;
-  if(action.kind==='movement'&&(mission.kind==='reserve'||group.guardCritical||!group.ready))result={status:'decision',action:mission.kind==='reserve'?'hold_reserve':'hold_position',text:'배정된 예비·거점 경계 병력을 유지하고 전투단 임무 완료를 기록한다',policyId:mission.policyId,ruleRefs:['오토마 0.2.1']};
+  if(action.kind==='movement'&&(mission.kind==='reserve'||group.guardCritical||!group.ready||!unitIds.length))result={status:'decision',action:mission.kind==='reserve'?'hold_reserve':'hold_position',text:'배정된 예비·거점 경계 병력을 유지하고 전투단 임무 완료를 기록한다',policyId:mission.policyId,ruleRefs:['오토마 0.2.1']};
   else if(SELECTION_RULES[action.kind]&&!runHasGraph(action.kind))result={status:'decision',action:`select_${action.kind}`,policyId:`${action.kind.toUpperCase()}-PRIORITY`,ruleRefs:SELECTION_RULES[action.kind].map(x=>x.rule)};
   else result=runProcedure(action.kind,facts);
   s.pending={kind:action.kind,groupId:group?.id??null,targetId:mission?.targetId??null,unitIds,facts,crt:null,result,boardRevision:s.boardRevision,options:[],selectedId:null};
