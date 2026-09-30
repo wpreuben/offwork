@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Paths of Glory 예외룰 치트시트 v2</title>
+<title>Paths of Glory 예외룰 치트시트 v3</title>
 <style>
   :root{
     --bg:#f5f1e8;
@@ -158,13 +158,21 @@
   }
   body.show-user-hidden .searchable tbody tr.user-hidden::after{content:none}
 
+
+.history{margin-top:12px;border-top:1px dashed var(--line);padding-top:9px}
+.history summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--accent);user-select:none}
+.history summary:hover{text-decoration:underline}
+.history .history-body{margin-top:8px;padding:10px 12px;border-radius:10px;background:#f5f1e8;color:var(--ink);font-size:13.5px;line-height:1.65}
+.history .history-body p{margin:0 0 8px}
+.history .history-body p:last-child{margin-bottom:0}
+.history .game-note{margin-top:7px;color:var(--muted);font-size:12.5px}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-<h1>Paths of Glory<br/>예외룰 치트시트 v2</h1>
-<p>기본 규칙은 과감히 줄이고, 기본 뼈대와 다르게 작동하는 예외·조건부 제한·국가별 특수규칙만 모았습니다.</p>
+<h1>Paths of Glory<br/>예외룰 치트시트 v3</h1>
+<p>기본 규칙은 줄이고 예외·조건부 제한·국가별 특수규칙만 정리했습니다. 역사적 배경이 있는 항목은 ‘역사적 맥락 보기’를 눌러 펼칠 수 있습니다.</p>
 </header>
 <div class="toolbar">
 <input class="search" id="search" placeholder="검색: 바다로의 경주, 영대원, 근동, 차르, 몬테네, 보급..." type="search"/>
@@ -175,46 +183,36 @@
 <span class="hidden-count" id="hiddenCount">숨김 0개</span>
 </div>
 </div>
-
-
-
-
-
-
-
-
-
 <section id="state"><h2>1. 카드·전쟁상황이 규칙을 바꾸는 예외</h2><div class="grid">
 <div class="card danger" data-hide-key="race-to-sea">
 <h3>바다로의 경주 — 독일 북프랑스 이동 제한</h3><div class="rule">11.1.9 / 12.7.7</div><p><b>바다로의 경주 사용 또는 동맹군 전쟁 상황 4 이상</b> 전까지 동맹군은 <b>아미앵·칼레·오스텐드에서 이동/SR 종료 불가</b>.</p>
 <ul><li>통과하며 제어하는 것은 가능.</li><li>그 칸이 방어 칸이었다면 전투 후 전진 가능.</li></ul>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>1914년 9월 마른 전투에서 독일군의 서부 공세가 멈춘 뒤 독일군은 엔(Aisne) 강 북쪽으로 물러나 방어선을 만들었습니다. 연합군이 엔 전선에서 독일군을 밀어내지 못하자, 양측은 정면 돌파 대신 상대의 <b>열린 북쪽 측면을 돌아가려는 기동</b>을 반복했습니다.</p><p>그 결과 전투의 중심이 아미앵·아라스·릴을 거쳐 점점 북쪽으로 이동했고, 10월에는 플랑드르와 이프르, 벨기에 해안까지 전선이 이어졌습니다. ‘바다로의 경주’는 처음부터 해안까지 달리기 경주를 한 것이 아니라, 서로의 측면을 계속 우회하려다 전선이 단계적으로 북해까지 연장된 과정입니다.</p><p class="game-note"><b>게임에서의 의미:</b> 1914년 8월부터 독일이 칼레·오스텐드 같은 해협 지역을 미리 선점하는 비역사적 최적화를 막고, 북부 전선이 역사적인 시점에 열리도록 하는 추상화입니다.</p></div></details></div>
 <div class="card warn" data-hide-key="russian-forts">
 <h3>러시아 요새 — 독일과 러시아의 초반 제한</h3><div class="rule">15.1.11~12</div><ul><li>독일군은 <b>동부전선 총사령부 이벤트 또는 동맹군 WS 4+</b> 전까지 러시아 요새를 공격 불가. 비어 있는 요새 포위는 가능.</li>
 <li>러시아 유닛은 <b>1턴에 독일 요새 칸 공격·진입·포위 불가</b>.</li></ul>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>1914년 동부전선은 서부처럼 처음부터 고정 전선이 형성된 곳이 아니었습니다. 러시아군은 동프로이센과 갈리치아로 공세를 시작했지만 동원과 철도망의 제약이 컸고, 독일도 초반 주력을 서부에 두어 동부에서는 제한된 병력으로 방어했습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 양측의 요새 관련 초기 제한은 실제로 요새가 물리적으로 ‘공격 불가’였다는 뜻보다, 1914년 8월 동부전선의 전개 속도와 준비 상태를 강제로 반영하는 장치에 가깝습니다.</p></div></details></div>
 <div class="card" data-hide-key="tsar-abdication">
 <h3>차르의 퇴위 이후</h3><div class="rule">9.2.2 / 11.3.2</div><ul><li>러시아 칸 <b>전투 활성화 비용 = 유닛당 1 OPS</b>. 이동 활성화는 정상.</li>
 <li>코카서스↔근동 경계는 이동·후퇴·공격/전진 불가, 러시아 군단 1개가 턴당 SR로만 넘을 수 있음.</li></ul>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>1917년 니콜라이 2세 퇴위 뒤 러시아군은 단순히 지휘관 하나를 잃은 것이 아니라 국가 전체의 정치적 권위가 흔들리는 상황에 들어갔습니다. 병사위원회와 임시정부가 공존하면서 명령 체계가 복잡해졌고 탈영과 복종 거부가 늘었습니다.</p><p>러시아군이 즉시 전투 불능이 된 것은 아니지만, 대규모 공격을 조직하고 유지하기가 점점 어려워졌습니다. 게임은 이를 <b>공격 활성화 비용 증가와 근동 이동 제한</b>으로 추상화합니다.</p></div></details></div>
 <div class="card" data-hide-key="french-mutiny">
 <h3>프랑스군 폭동</h3><div class="rule">7.1.8</div><p>프랑스 의무공격은 요구되지 않지만, 프랑스/벨기에/독일에서 미국 유닛과 함께 쌓이지 않은 프랑스 유닛이 공격하면 <b>그 턴 최초 1회 VP +1</b>.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>1917년 니벨 공세는 큰 희생에도 약속했던 돌파를 이루지 못했고 프랑스군 여러 부대에서 집단적인 명령 거부와 폭동이 발생했습니다. 병사들이 방어 자체를 포기했다기보다, <b>무모한 대규모 공세에 다시 투입되는 것을 거부</b>한 경우가 많았습니다.</p><p>페탱은 휴가·보급·처우를 개선하고 대규모 돌파공세보다 제한된 목표의 공격을 선호하며 군을 수습했습니다. 게임에서 프랑스가 방어는 가능하지만 공격에는 대가를 치르는 구조가 이 상황을 반영합니다.</p></div></details></div>
 <div class="card" data-hide-key="hl-command">
 <h3>H-L 지휘권 잡다 이후</h3><div class="rule">7.1.5</div><p>이 이벤트 사용 이후 <b>독일 의무공격은 ‘없음’</b>으로 취급합니다.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>1916년 베르됭과 솜 전투 뒤 독일 최고사령부 수장이 팔켄하인에서 힌덴부르크와 루덴도르프로 교체되었습니다. 두 사람은 제3차 최고육군지휘부(OHL)를 이끌며 군사뿐 아니라 경제·인력 동원과 외교정책에도 큰 영향력을 행사했습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 1917년의 힌덴부르크선 후퇴처럼 보다 중앙집권적이고 선택적인 전략 운용이 가능해진 점을, 독일 의무공격이 사라지는 규칙으로 표현합니다.</p></div></details></div>
 <div class="card" data-hide-key="neutral-entry">
 <h3>중립국 참전 — 한 턴에 하나</h3><div class="rule">9.5.2.1~2</div><p>불가리아·그리스·이탈리아·루마니아 참전 이벤트는 <b>양 진영 합쳐 턴당 1장</b>만 사용 가능. 사용 즉시 해당 국가 유닛을 배치합니다.</p>
 </div>
 <div class="card warn" data-hide-key="italy-romania-late">
 <h3>이탈리아·루마니아 늦은 참전</h3><div class="rule">9.5.2.5~5.1</div><ul><li>동맹군은 총력전, 연합군은 아직 총력전이 아니면 해당 참전 카드는 <b>OPS/SR/RP 사용 불가</b>; 이벤트 또는 버리기만 가능.</li>
 <li>연합군이 총력전인데 이탈리아가 중립인 턴마다 전쟁상황 페이즈에 <b>VP +1</b>.</li></ul>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>이탈리아는 전쟁 전 독일·오스트리아-헝가리와 삼국동맹을 맺었지만 1914년에는 중립을 선언했습니다. 이후 양 진영과 협상한 끝에 1915년 4월 런던조약에서 영국·프랑스·러시아가 전후 영토 획득을 약속하자 연합국 편으로 기울었고, 5월 오스트리아-헝가리에 선전포고했습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 연합군이 총력전에 들어갈 정도로 시간이 지났는데도 이탈리아를 계속 중립으로 남겨 두는 비역사적 전개를 억제하는 압력입니다.</p></div></details></div>
 <div class="card" data-hide-key="greece-limited">
 <h3>살로니카 후 그리스는 ‘제한적 참전’</h3><div class="rule">9.5.2.4</div><p>그리스 유닛이 배치되어도 <b>활성화·공격·이동 불가</b>. 그리스 유닛이 있는 칸은 통과/공격/보급선 연결도 불가. <b>중립국 참전 그리스</b> 이벤트 후에야 정상적으로 움직입니다.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>그리스는 전쟁 중 국왕 콘스탄티노스 1세와 총리 베니젤로스 사이의 심각한 정치적 분열, 이른바 <b>국가분열(National Schism)</b>을 겪었습니다. 국왕은 중립을 선호한 반면 베니젤로스는 연합국 참전을 주장했습니다.</p><p>1915년 연합군은 세르비아를 지원하려 살로니카에 병력을 상륙시켰지만 그리스 전체가 즉시 교전국이 된 것은 아니었습니다. 살로니카의 친베니젤로스 세력과 아테네의 왕당파 정부가 사실상 병존했고, 1917년에야 그리스가 공식적으로 연합국 편에 참전했습니다.</p><p class="game-note"><b>게임에서의 의미:</b> ‘유닛은 배치되지만 움직일 수 없는 제한적 참전’은 이 무장중립과 국내 분열을 직접적으로 표현합니다.</p></div></details></div>
 </div></section>
-
 <section id="activation"><h2>2. 활성화·이동 예외</h2><div class="grid">
 <div class="card ok" data-hide-key="activation-nationality">
 <h3>활성화 비용에서 같은 국가로 취급</h3><div class="rule">9.2.3</div><ul><li>영국+호주+캐나다+포르투+아랍북 = 영국 1국가</li>
@@ -229,18 +227,17 @@
 <div class="card" data-hide-key="near-east-activation">
 <h3>근동 연합군 공격 활성화 제한</h3><div class="rule">9.2.7</div><p>연합군은 근동 지도에서 <b>행동 라운드당 한 칸만 공격 활성화</b> 가능.</p>
 <p>예외: <b>영지원 상륙 거점 칸</b>, <b>영국 근동군이 있는 칸</b>.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>중동 전선은 서부전선처럼 촘촘한 철도와 도로망 위에서 여러 대규모 공세를 동시에 벌이기 어려웠습니다. 광대한 거리, 사막, 물 부족, 제한된 철도와 항만 때문에 작전을 준비하고 지속하는 데 훨씬 많은 시간이 필요했습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 연합군이 근동에서 행동 라운드당 한 곳만 공격 활성화할 수 있는 제한은, 동시다발적 대공세가 어려웠던 병참 현실을 압축한 것입니다.</p></div></details></div>
 <div class="card" data-hide-key="mef-activation-cost">
 <h3>영지원 상륙 거점 활성화 비용</h3><div class="rule">9.2.7.1</div><p>상륙 거점으로 보급받는 <b>영지원군은 3 OPS</b>, 다른 연합군 군단은 <b>군단당 1 OPS</b>. 일부만 골라 비용을 줄일 수 없습니다.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>갈리폴리와 동지중해 원정은 병력을 해안에 내려놓는 것으로 끝나지 않았습니다. 상륙부대는 해상수송, 해변 보급, 탄약과 식수 운송에 크게 의존했고 보급선 자체가 작전의 한계를 결정했습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 영지원군(MEF)을 상륙 거점에서 움직이는 데 높은 OPS를 요구하는 것은 원정군의 지휘·병참 부담을 표현합니다.</p></div></details></div>
 <div class="card" data-hide-key="near-east-army-entry">
 <h3>근동에 들어갈 수 있는 군은 제한됨</h3><div class="rule">11.3.1</div><p>근동에서 이동/공격 가능한 군은 <b>러시아 코카서, 영국 영지원·근동, 프랑스 동방군, 터키 일드름·이슬람군</b>뿐.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>수에즈·팔레스타인·메소포타미아·코카서스의 각 전선은 철도, 항구, 도로와 식수 공급 능력에 의해 투입 가능한 병력 규모가 제한되었습니다. 유럽의 모든 야전군을 원하는 대로 중동에 옮길 수 있는 환경이 아니었습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 특정 이름의 군만 근동에서 활동하게 한 것은 해당 전선에 역사적으로 편성·투입된 원정군만 대규모 Army로 활동하도록 만든 장치입니다.</p></div></details></div>
 <div class="card warn" data-hide-key="russian-ne-boundary">
 <h3>러시아 코카서스↔근동 경계</h3><div class="rule">11.3.2</div><p>턴당 러시아 <b>군단 1개</b>만 이동·후퇴·공격/전진으로 경계를 넘을 수 있습니다. <b>러시아 군은 코카서군 포함 절대 이 방식으로 못 넘음</b>.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>코카서스 전선은 산악지형과 열악한 교통망 때문에 대규모 부대를 유럽 러시아와 자유롭게 왕복시키기 어려웠습니다. 오스만 국경의 산악로와 제한된 철도가 병참의 병목이었습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 군단 1개만 경계를 넘고 Army는 못 넘는 제한은 코카서스를 별도의 병참권역처럼 취급하기 위한 강한 추상화입니다.</p></div></details></div>
 </div></section>
-
 <section id="combat"><h2>3. 전투·전진 예외</h2><div class="grid">
 <div class="card" data-hide-key="multinational-count">
 <h3>다국적 공격에서 국적 예외</h3><div class="rule">12.1.11.2</div><p><b>아랍북·호주·캐나다·포르투 = 영국</b>, <b>세누시 = 터키</b>, <b>몬테네 = 세르비아</b>로 인정합니다.</p>
@@ -252,7 +249,7 @@
 </div>
 <div class="card warn" data-hide-key="british-loss-priority">
 <h3>영국 공격 시 손실 우선순위</h3><div class="rule">12.4.5</div><p>가능한 경우 <b>영대원군 → 영대원군단 → 영지원군 → 호주/캐나다 군단</b> 순서로 첫 손실을 적용합니다.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>1914년의 영국 대륙원정군(BEF)은 대륙의 징병제 대군에 비해 매우 작은 전문 직업군이었습니다. 몽스·마른·엔·이프르를 거치며 이 숙련된 정규군의 상당 부분이 소모되었고, 이후 영국군은 Territorial과 키치너 신군 중심의 대규모 군대로 바뀌었습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 영대원군과 영대원군단에 손실 우선순위를 주고 재편을 어렵게 한 것은 초기 전문군이 전쟁 초기에 빠르게 소모되는 흐름을 유도합니다.</p></div></details></div>
 <div class="card" data-hide-key="caucasus-loss">
 <h3>코카서군 공격 시 손실 우선</h3><div class="rule">12.4.5</div><p>러시아 <b>코카서군</b>이 공격에 참가하면 손실 숫자를 넘지 않는 범위에서 코카서군이 먼저 손실을 받아야 합니다.</p>
 </div>
@@ -263,13 +260,12 @@
 <h3>몬테네는 전진·후퇴 자체가 불가</h3><div class="rule">12.5.4 / 12.7.1</div><p>몬테네 유닛은 <b>이동·전진·후퇴 불가</b>. 후퇴를 요구받는 상황은 제거 위험으로 이어집니다.</p>
 </div>
 </div></section>
-
 <section id="loss"><h2>4. 군 대체·재편 예외</h2><div class="grid">
 <div class="card danger" data-hide-key="bef-replacement">
 <h3>영대원군(BEF) 대체</h3><div class="rule">12.4.4.3 / 17.1.7</div><ul><li>영대원군 제거 시 <b>영대원군단으로만</b> 대체.</li>
 <li>영국 일반 군단은 영대원군을 대체할 수 없음.</li>
 <li><b>영대원군은 RP로 재편 불가</b> — 카운터의 재편불가 표시.</li></ul>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>영대원군은 전쟁 전 영국의 소규모 전문 직업군을 나타냅니다. 1914년 말까지 원래의 전문군은 막대한 손실을 입었고, 영국은 자원병·Territorial·이후 징집병으로 이루어진 훨씬 큰 군대로 재편되었습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 영대원군을 일반 영국군처럼 RP로 되살릴 수 없고 전용 영대원군단으로만 대체하게 하는 것은, ‘1914년의 원래 BEF’라는 질적·역사적 존재가 소모되면 그대로 복원될 수 없었다는 점을 표현합니다.</p></div></details></div>
 <div class="card" data-hide-key="mef-ne-replacement">
 <h3>영지원·영국 근동군의 군단 대체</h3><div class="rule">12.4.4.3</div><p>영지원군과 영국 근동군은 제거될 때 <b>일반 영국 군단</b>으로 대체할 수 있습니다.</p>
 </div>
@@ -286,13 +282,12 @@
 <h3>세르비아군 재생성 위치</h3><div class="rule">17.1.5</div><p>세르비아군은 <b>베오그라드</b>(동맹군이 니슈를 제어하지 않을 때) 또는 <b>살로니카</b>에서 재생성 가능.</p>
 </div>
 </div></section>
-
 <section id="supply"><h2>5. 보급·제어 예외</h2><div class="grid">
 <div class="card warn" data-hide-key="allied-supply-london">
 <h3>연합군 보급원 — 파리가 아니다</h3><div class="rule">14.2.2~4</div><ul><li>러시아·세르비아·루마니아: 러시아/베오그라드의 지정 보급원.</li>
 <li>세르비아는 연합군 제어 살로니카도 사용 가능.</li>
 <li><b>그 외 모든 연합군 유닛의 보급원은 런던</b>. 파리는 보급원이 아님.</li></ul>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>영국은 연합국의 핵심 해상 물류 허브였고 왕립해군의 제해권은 프랑스·이탈리아·중동 등 여러 전선을 연결하는 기반이었습니다.</p><p class="game-note"><b>게임에서의 의미:</b> ‘다른 모든 연합군 유닛의 보급원은 런던’은 프랑스군이 실제로 런던에서 먹고 싸웠다는 뜻이 아니라, 연합군의 해상 보급망 전체를 하나의 전략적 허브로 압축한 추상화입니다.</p></div></details></div>
 <div class="card" data-hide-key="always-supplied">
 <h3>상시 보급 유닛</h3><div class="rule">14.1.5</div><ul><li>몬테네</li><li>근동의 아랍북·세누시</li><li>세르비아 유닛은 세르비아 안에서</li><li>요새는 보급 불필요</li><li>메디나 터키 유닛은 소모 페이즈 특별 보급</li></ul>
 </div>
@@ -301,22 +296,21 @@
 </div>
 <div class="card" data-hide-key="arab-control">
 <h3>아랍북은 지나간 칸을 점령하지 않음</h3><div class="rule">11.1.15 / 근동 특별 규칙</div><p>아랍북은 동맹군 칸에 들어가도 일반 유닛처럼 제어를 영구 전환하지 않습니다. <b>점유 중인 동안만</b> 연합군 제어로 간주하고 떠나면 원래대로 돌아갑니다.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>아랍반란군은 1916년 이후 헤자즈 철도와 오스만의 통신·보급망을 위협하며 넓은 지역에서 기동했습니다. 그러나 유럽식 정규군처럼 지나가는 지역마다 즉시 안정된 행정통제망을 세우는 군대는 아니었습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 아랍북이 지나간 칸을 영구 제어하지 않고 점유 중에만 영향력을 행사하는 것은 습격·현지 봉기·기동전 중심의 성격을 표현합니다.</p></div></details></div>
 <div class="card" data-hide-key="albania-taranto">
 <h3>알바니아의 타란토 특별 보급</h3><div class="rule">11.1.12</div><p>알바니아 칸은 소모 페이즈에 일반 연합군 보급원뿐 아니라 <b>이탈리아가 중립이어도 타란토</b>를 통해 보급을 추적할 수 있습니다.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>1915년 세르비아군이 붕괴한 뒤 세르비아 정부와 군대는 알바니아를 거쳐 아드리아해로 철수했고, 연합국의 해상 지원으로 코르푸 등지로 수송되었습니다. 아드리아해는 발칸 전선과 이탈리아를 연결하는 중요한 통로였습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 알바니아가 타란토를 통해 특별 보급을 받을 수 있는 것은, 육상 보급망에서 고립되어도 아드리아해의 연합군 해상 지원과 연결될 수 있음을 단순화한 것입니다.</p></div></details></div>
 </div></section>
-
 <section id="sr"><h2>6. 전략 재배치(SR)·RP 예외</h2><div class="grid">
 <div class="card" data-hide-key="russian-sr">
 <h3>러시아 SR</h3><div class="rule">13.1.6</div><p>러시아 유닛은 <b>러시아 내부에서만 SR</b>. 러시아 군단은 <b>해상 SR 불가</b>.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>러시아 제국은 거대한 영토에 비해 철도망의 밀도와 수송능력이 독일보다 낮았고, 철도 궤간도 서유럽과 달랐습니다. 병력 이동은 가능했지만 연합군의 범용 해상 네트워크처럼 자유롭지는 않았습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 러시아 SR을 자국 내부 중심으로 묶고 해상 SR을 막는 것은 러시아군을 세계 곳곳에 원정군처럼 재배치하는 비역사적 사용을 방지합니다.</p></div></details></div>
 <div class="card" data-hide-key="army-sea-sr">
 <h3>Army는 해상 SR 불가</h3><div class="rule">13.1.7</div><p>국적과 무관하게 <b>군(Army)은 절대로 해상 SR을 할 수 없습니다</b>.</p>
 </div>
 <div class="card" data-hide-key="montenegro-sr">
 <h3>몬테네 SR</h3><div class="rule">13.1.11</div><p>몬테네는 육로 SR 불가. <b>예비 병력 구역 ↔ 체티네</b> 사이의 SR만 가능합니다.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>몬테네그로군은 약 3만~4만 명 규모의 작고 지역적인 군대로, 씨족 기반 민병대적 성격과 산악전에 강한 특성을 가졌습니다. 세르비아와 공동작전을 했지만 현대적인 대규모 참모·수송 체계는 제한적이었습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 몬테네 유닛을 체티네 중심의 사실상 고정 전력으로 둔 것은 이 작은 지역군을 유럽 전역으로 이동시키는 비역사적 사용을 막기 위한 강한 추상화입니다.</p></div></details></div>
 <div class="card" data-hide-key="us-corps-sr">
 <h3>미국 군단의 Reserve Box SR</h3><div class="rule">13.1.8</div><p>미국 군단은 예비 병력 구역에서 <b>연합군 제어 프랑스 항구</b>로 SR 가능하며, 목적지에 미국 유닛이 이미 있을 필요가 없습니다.</p>
 </div>
@@ -328,39 +322,38 @@
 <li>동맹군 군단: 턴당 1개. <b>터키 유닛은 이 제한 제외</b>.</li>
 <li>영국/호주 군단: 턴당 1개가 해상 또는 Reserve Box를 통해 근동 출입. 캐나다·포르투·영대원은 불가.</li>
 <li>프랑스·이탈리아·그리스·루마니아·세르비아·미국·벨기에 등은 Reserve Box/해상을 통한 근동 출입 SR 제한이 있음.</li></ul>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>근동 전선의 가장 큰 제약은 병력을 그곳까지 <b>옮기고 먹이고 탄약을 공급하는 능력</b>이었습니다. 해상수송이 가능해도 항구 처리능력, 철도, 도로, 식수와 보급창이 뒤따라야 했습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 근동 출입 SR의 국적·수량 제한은 유럽의 군단들을 한꺼번에 중동으로 던져 넣는 것을 막고 전선의 병참적 고립을 표현합니다.</p></div></details></div>
 <div class="card" data-hide-key="special-rp-supply">
 <h3>특정 우회 보급 상태에서는 RP 불가</h3><div class="rule">17.1.4.1</div><p>일부 국가 유닛은 자기 정상 보급원이 아닌 특정 타국 보급원을 통해 보급받는 경우 <b>재편 불가</b>. 예: 소피아/콘스탄티노플을 통해 보급받는 독일·오헝 등.</p>
 </div>
 </div></section>
-
 <section id="national"><h2>7. 국가·근동 특수규칙</h2><div class="grid">
 <div class="card danger" data-hide-key="montenegro-summary">
 <h3>몬테네그로</h3><div class="rule">국가별 예외 요약</div><p><b>상시 보급 / 이동·전진·후퇴 불가 / Reserve↔체티네 SR만 / 활성화·다국적 공격에서 세르비아 취급 / 세르비아 전용 전투카드 사용 불가.</b></p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>몬테네그로는 세르비아보다 훨씬 작은 국가였고 군대 역시 약 3만~4만 명 규모의 지역군이었습니다. 전쟁 초 세르비아와 협력해 오스트리아-헝가리와 싸웠으며, 세르비아 장교들이 몬테네그로 최고사령부의 작전계획을 지원하기도 했습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 세르비아와의 긴밀한 협력은 ‘활성화·다국적 공격에서 세르비아 취급’으로, 제한된 수송·조직 능력은 ‘체티네 고정’에 가까운 규칙으로 표현됩니다.</p></div></details></div>
 <div class="card" data-hide-key="serbia-summary">
 <h3>세르비아</h3><div class="rule">국가별 예외 요약</div><p>세르비아 안에서 상시 보급. 베오그라드가 적 제어여도 SR·재편 가능. 군 재생성은 베오그라드 조건부 또는 살로니카.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>세르비아는 1914년 오스트리아-헝가리의 공세를 여러 차례 격퇴했지만 국력과 인력의 한계가 컸습니다. 1915년 독일·오헝·불가리아의 공동공세로 국토를 잃은 뒤 알바니아를 넘어 철수했고, 연합국의 도움으로 재편된 후 살로니카 전선에 다시 투입되었습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 베오그라드를 잃어도 완전히 기능을 잃지 않고 살로니카에서 군을 재생성할 수 있는 규칙은 ‘국토 상실 후에도 전쟁을 계속한’ 역사를 반영합니다.</p></div></details></div>
 <div class="card warn" data-hide-key="british-associated">
 <h3>호주·캐나다·포르투·아랍북</h3><div class="rule">국가별 예외 요약</div><ul><li>활성화/다국적 공격에서는 영국 취급.</li><li>재편은 연합군 RP 사용.</li><li>영국 Army 대체 불가.</li><li>영국 전용 전투카드·영국 의무공격에는 영국으로 취급하지 않음.</li></ul>
 </div>
 <div class="card" data-hide-key="senussi-summary">
 <h3>세누시</h3><div class="rule">근동 특별 규칙</div><p>활성화·다국적 공격·점선에서는 터키 취급. 그러나 <b>터키 의무공격 수행 불가</b>, <b>터키 전용 전투카드 조건 충족 불가</b>. 근동에서는 상시 보급.</p>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>세누시는 리비아와 이집트 서부 사막의 종교·부족 네트워크였고, 1915년 오스만의 무기와 고문 지원을 받아 영국·이탈리아 세력에 맞서 봉기했습니다. 정규 오스만군 자체는 아니었지만 오스만과 협력하여 이집트 서부의 영국 병력을 묶었습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 활성화·다국적 공격에서는 터키와 협조하지만 터키 의무공격이나 터키 전용 전투카드에는 ‘터키군’으로 인정되지 않는 것이 이 관계를 표현합니다.</p></div></details></div>
 <div class="card danger" data-hide-key="near-east-core">
 <h3>근동 핵심 묶음</h3><div class="rule">11.3 / 13.2 / 근동 특별 규칙</div><ul><li>들어갈 수 있는 Army 자체가 제한됨.</li><li>연합군 공격 활성화는 AR당 1칸이 기본.</li><li>러시아 경계 이동/SR 각각 턴 제한.</li><li>영지원 상륙 거점은 활성화·보급·항구 취급이 전부 특수.</li><li>아랍북·세누시는 보급/제어/국적 판정이 일반 유닛과 다름.</li></ul>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>중동 전쟁은 수에즈, 갈리폴리, 메소포타미아, 팔레스타인, 코카서스처럼 서로 멀리 떨어진 전역들의 집합이었습니다. 병력은 해상수송과 제한된 철도망에 의존했고 사막·산악지형, 물 부족, 질병이 작전 규모를 결정했습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 근동의 많은 예외는 사실 하나의 주제로 묶입니다. <b>“유럽 전선처럼 대군을 자유롭게 이동·집중할 수 없다.”</b> 이를 Army 진입, SR, 활성화, 보급 제한으로 나누어 구현한 것입니다.</p></div></details></div>
 <div class="card" data-hide-key="mandatory-offensive-exceptions">
 <h3>의무공격 국적 예외</h3><div class="rule">7.1.4~7</div><ul><li>영국/프랑스 MO는 프랑스·벨기에·독일의 독일 유닛을 공격해야 인정.</li>
 <li>호주·캐나다·포르투·아랍북은 영국 MO를 충족하지 않음.</li>
 <li>세누시는 터키 MO를 충족하지 않음.</li>
 <li>이탈리아 참전 후 ‘오헝(이탈리아)’은 이탈리아 관련 목표를 공격해야 충족.</li></ul>
-</div>
+<details class="history"><summary>역사적 맥락 보기</summary><div class="history-body"><p>제1차 세계대전의 동맹과 연합은 각국 정부와 군 수뇌부의 이해가 항상 일치하지 않았습니다. 서로 특정 전선에서 공세를 요구했고, 정치적 압력 때문에 군사적으로 불리한 공격이 이루어지기도 했습니다.</p><p class="game-note"><b>게임에서의 의미:</b> 의무공격은 이런 연합정치의 압력을 강제합니다. 자치령·부족군이 본국의 의무를 대신 충족하지 못하게 한 것은 단순히 ‘같은 편이 공격했다’가 아니라 <b>특정 국가의 전쟁 노력</b>을 요구한다는 뜻입니다.</p></div></details></div>
 <div class="card danger" data-hide-key="combat-card-nationality">
 <h3>전투카드 국가 조건은 더 엄격</h3><div class="rule">9.5.4.1.1</div><p>카드가 특정 국가 참여를 요구하면 실제 그 국가 유닛이 있어야 합니다. <b>호주·캐나다·포르투·아랍북≠영국, 세누시≠터키, 몬테네≠세르비아</b>로 처리합니다.</p>
 </div>
 </div></section>
-<footer>용도: 기본 룰 설명서가 아니라 ‘기본 규칙과 다르게 작동하는 것’만 빠르게 확인하는 예외룰 치트시트. 규칙 번호는 한국어 룰북 기준.</footer>
+<footer>용도: 기본 룰 설명서가 아니라 ‘기본 규칙과 다르게 작동하는 것’만 빠르게 확인하는 예외룰 치트시트. 역사적 맥락은 룰북의 규칙 설명과 별도로 일반 역사자료를 바탕으로 덧붙였으며, 규칙과 실제 역사는 1:1 대응이 아닌 게임적 추상화일 수 있습니다.</footer>
 </div>
 <script>
 const STORAGE_KEY = 'pog-cheatsheet-hidden-v2';
