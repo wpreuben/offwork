@@ -33,7 +33,7 @@ export const PHASE_CHECKLISTS=Object.freeze({
 export const THREAT_ORDER=Object.freeze({supply:0,vp_supply:1,vp_loss:2,entry_penalty:3,city_penalty:4,encirclement:5});
 export const GOAL_STEPS=Object.freeze([
   {id:'GOAL-ELIGIBLE',text:'이미 득점한 목표와 규칙상 불가능·보급 유지 불가·즉시 붕괴할 목표를 제외한다',rule:'16.3, S1.3'},
-  {id:'GOAL-THREAT',text:'보급 단절, 얻은 VP 상실, X·Y·Z 및 시작선 서쪽 도시 감점 위협에 먼저 대응한다',rule:'16.3, 24.1.4'},
+  {id:'GOAL-THREAT',text:'위협 우선순위표 순으로 대응한다. 같은 종류는 먼저 발생하는 위협, 다시 같으면 장부에 먼저 입력한 위협을 고른다',rule:'16.3, 24.1.4'},
   {id:'GOAL-WIN-NOW',text:'이번 승리 판정에서 8VP를 만들 수 있는 목표를 우선한다',rule:'S1.3'},
   {id:'GOAL-CONTINUE',text:'여전히 가능하고 안전한 이전 임무를 유지한다',rule:'오토마 0.2'},
   {id:'GOAL-GAIN',text:'새 순 VP가 큰 목표, 동률이면 일찍 완료되는 목표를 고른다',rule:'S1.3'},
@@ -45,6 +45,7 @@ const EXIT_TYPES=new Set(['east_exit','south_exit']);
 function selectEquivalent(items,die,turn){
   const rotated=items.length>3?items.slice((turn-1)%items.length).concat(items.slice(0,(turn-1)%items.length)):items;
   const top=rotated.slice(0,3);
+  if(top.length===2)return top[die%2===1?0:1];
   return top[Math.floor((die-1)*top.length/6)];
 }
 
@@ -59,16 +60,17 @@ export function planAxisTurn({turn,vp,profile,currentGoal=null,objectiveStates={
   for(const target of TARGETS){
     if(target.type==='vp_hex'&&objectiveStates[target.id]?.control==='axis_unsupplied')urgent.push({id:`supply_${target.id}`,kind:'vp_supply',targetId:target.id,eta:0,actionable:true});
   }
-  urgent.sort((a,b)=>THREAT_ORDER[a.kind]-THREAT_ORDER[b.kind]||a.eta-b.eta||a.id.localeCompare(b.id));
+  urgent.sort((a,b)=>THREAT_ORDER[a.kind]-THREAT_ORDER[b.kind]||a.eta-b.eta);
   if(urgent.length){
     const threat=urgent[0];
     const ids={supply:'THREAT-SUPPLY',vp_supply:'THREAT-VP-SUPPLY',vp_loss:'THREAT-VP-LOSS',entry_penalty:'THREAT-ENTRY',city_penalty:'THREAT-CITY',encirclement:'THREAT-ENCIRCLE'};
-    return {kind:'respond',id:threat.id,targetId:threat.targetId??null,policyId:ids[threat.kind],reason:`${threat.kind} 위협에 먼저 대응`,ruleRefs:threat.kind.includes('penalty')?['24.1.4']:['16.1–16.5','S1.3']};
+    const labels={supply:'보급로 단절',vp_supply:'점유 VP 보급 단절',vp_loss:'기존 VP 상실',entry_penalty:'X·Y·Z 감점',city_penalty:'서쪽 도시 감점',encirclement:'핵심 부대 포위'};
+    return {kind:'respond',id:threat.id,targetId:threat.targetId??null,policyId:ids[threat.kind],reason:`${labels[threat.kind]} 위협에 먼저 대응`,ruleRefs:threat.kind.includes('penalty')?['24.1.4']:['16.1–16.5','S1.3']};
   }
   const eligible=[];
   for(const [order,target] of TARGETS.entries()){
     const s=objectiveStates[target.id];
-    if(!s||SCORED.has(s.control)||s.control==='axis_unsupplied'||!s.forceReady||!s.supplySecure||s.counterattack==='collapse'||!Number.isInteger(s.eta)||s.eta<0||s.eta>2)continue;
+    if(!s||SCORED.has(s.control)||s.control==='axis_unsupplied'||!s.forceReady||!s.supplySecure||s.counterattack==='collapse'||!Number.isInteger(s.eta)||s.eta<0||s.eta>2||turn+s.eta>8)continue;
     if(EXIT_TYPES.has(target.type)&&(!s.exitStepsReady||!s.roadReady))continue;
     eligible.push({target,order,eta:s.eta,immediateWin:s.eta===0&&vp+target.vp>=8});
   }

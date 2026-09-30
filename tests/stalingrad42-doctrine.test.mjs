@@ -51,6 +51,17 @@ test('equal goals use a fair two or three way d6 mapping',()=>{
   for(const id of new Set(ids))assert.equal(ids.filter(x=>x===id).length,2);
 });
 
+test('exactly two tied goals use odd and even d6 as printed',()=>{
+  const objectives={...state('usman'),...state('millerovo')};
+  const ids=Array.from({length:6},(_,i)=>planAxisTurn(input({objectiveStates:objectives,die:i+1})).targetId);
+  assert.deepEqual(ids,['usman','millerovo','usman','millerovo','usman','millerovo']);
+});
+
+test('final turn excludes goals that cannot finish before scenario end',()=>{
+  const objectives={usman:{control:'soviet',eta:0,supplySecure:true,forceReady:true,counterattack:'none'},rostov:{control:'soviet',eta:1,supplySecure:true,forceReady:true,counterattack:'none'}};
+  assert.equal(planAxisTurn(input({turn:8,objectiveStates:objectives})).targetId,'usman');
+});
+
 test('recovery and supply are rules checklists with correct references',()=>{
   assert.deepEqual(PHASE_CHECKLISTS.recovery.map(x=>x.rule),['13.4','13.5','21.4']);
   assert.deepEqual(PHASE_CHECKLISTS.supply.map(x=>x.rule),['17.2.1','16.1','16.5','18.6.4']);

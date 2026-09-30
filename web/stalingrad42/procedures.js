@@ -15,9 +15,11 @@ export function attackReadiness({profile,successFaces,lossFaces,critical=false})
 // Printed charts and the browser walk these exact nodes. A missing observation never becomes false.
 export const PROCEDURES=Object.freeze({
   movement:{title:'추축군 이동',root:'MOVE-CORRIDOR',nodes:[
-    node('MOVE-CORRIDOR','corridorThreatened','현재 추축군 보급로가 이번 턴에 끊길 위험이 있는가?','MOVE-SUPPLY','MOVE-GOAL','16.3'),
+    node('MOVE-CORRIDOR','corridorThreatened','현재 추축군 보급로가 이번 턴에 끊길 위험이 있는가?','MOVE-SUPPLY','MOVE-RESPONSE','16.3'),
+    node('MOVE-RESPONSE','urgentResponse','선택된 작전 계획이 VP·감점·포위 위협 대응인가?','MOVE-COUNTER','MOVE-GOAL','S1.3, 24.1, 16.3'),
     node('MOVE-GOAL','goalActive','이번 턴 실행 가능한 작전 목표가 있는가?','MOVE-APPROACH','MOVE-SCREEN','S1.3'),
     end('MOVE-SUPPLY','secure_corridor','보급로를 안전하게 하는 첫 합법 이동을 고른다','16.3'),
+    end('MOVE-COUNTER','counter_threat','선택한 VP·감점·포위 위협을 막는 첫 합법 이동을 고른다','S1.3, 24.1, 16.3'),
     end('MOVE-APPROACH','approach_goal','담당 편제를 목표 쪽으로 이동한다. 보급과 소련군 다음 턴 포위 위험을 먼저 확인한다','5.0, 16.3'),
     end('MOVE-SCREEN','screen_line','중요 VP·보급로를 지킬 수 있는 위치를 우선한다','5.0, 16.3')
   ]},

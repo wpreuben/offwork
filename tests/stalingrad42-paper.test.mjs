@@ -46,7 +46,7 @@ test('paper decision graph and web resolver agree on representative defense and 
     ['defense',{ddLegal:true,retreatBreaksSupply:false,retreatLosesVp:false,retreatEliminates:false}],
     ['attack',{legal:true,supplyAfter:true,counterattackCollapse:false,goalRelevant:true,oddsReady:true,canHold:true}],
     ['attack',{legal:true,supplyAfter:false}],
-    ['movement',{corridorThreatened:false,goalActive:true}]
+    ['movement',{corridorThreatened:false,urgentResponse:false,goalActive:true}]
   ]){
     let id=PROCEDURES[kind].root;
     for(let n=0;n<20;n++){

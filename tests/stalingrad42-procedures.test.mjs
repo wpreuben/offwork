@@ -8,8 +8,9 @@ test('movement goes to supply corridor before an objective when it is threatened
 });
 
 test('movement follows assigned objective and otherwise protects the line',()=>{
-  assert.equal(runProcedure('movement',{corridorThreatened:false,goalActive:true}).action,'approach_goal');
-  assert.equal(runProcedure('movement',{corridorThreatened:false,goalActive:false}).action,'screen_line');
+  assert.equal(runProcedure('movement',{corridorThreatened:false,urgentResponse:false,goalActive:true}).action,'approach_goal');
+  assert.equal(runProcedure('movement',{corridorThreatened:false,urgentResponse:false,goalActive:false}).action,'screen_line');
+  assert.equal(runProcedure('movement',{corridorThreatened:false,urgentResponse:true,goalActive:true}).action,'counter_threat');
 });
 
 test('attack rejects illegal, unsupplied and suicidal local opportunities',()=>{
