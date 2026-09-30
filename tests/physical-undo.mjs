@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+import {FileStore,validateSession} from '../web/physical-storage.js';
+const files=new Map();let failWrite=false;
+const directory={async getFileHandle(name){return {
+ async getFile(){return {async text(){return files.get(name);}};},
+ async createWritable(){let pending;return {async write(value){if(failWrite)throw new Error('disk full');pending=value;},async close(){files.set(name,pending);},async abort(){}};}
+};}};
+const store=new FileStore(directory,'test');store.lock=fn=>fn();
+let session=await store.create({guns:false},'되돌리기 검증');
+const sid=session.id,initial=structuredClone((await store.read(sid)).state);
+assert.equal(session.can_undo,false);
+session=await store.act(sid,session.revision,{type:'roll',value:3});
+const rolled=structuredClone((await store.read(sid)).state);
+session=await store.act(sid,session.revision,{type:'complete'});
+session=await store.act(sid,session.revision,{type:'undo'});
+assert.deepEqual((await store.read(sid)).state,rolled);
+session=await store.act(sid,session.revision,{type:'undo'});
+assert.deepEqual((await store.read(sid)).state,initial);
+assert.equal(session.can_undo,false);
+assert.equal(session.history.length,5);
+await assert.rejects(store.act(sid,session.revision,{type:'undo'}));
+session=await store.act(sid,session.revision,{type:'roll',value:6});
+session=await store.act(sid,session.revision,{type:'note',text:'새 진행'});
+session=await store.act(sid,session.revision,{type:'undo'});
+assert.equal(session.state.pending.die,6);
+assert.equal(session.state.notes.length,0);
+session=await store.act(sid,session.revision,{type:'undo'});
+assert.deepEqual((await store.read(sid)).state,initial);
+session=await store.act(sid,session.revision,{type:'roll',value:2});
+const before=await store.read(sid);
+await assert.rejects(store.act(sid,session.revision-1,{type:'undo'}),error=>error.status===409);
+failWrite=true;await assert.rejects(store.act(sid,session.revision,{type:'undo'}));failWrite=false;
+assert.deepEqual(await store.read(sid),before);
+validateSession(before);
+const imported=await store.import(JSON.stringify(before));
+assert.equal(imported.can_undo,true);
+const undone=await store.act(imported.id,imported.revision,{type:'undo'});
+assert.equal(undone.can_undo,false);
+assert.deepEqual((await store.read(imported.id)).state,initial);
+let old=await store.create({guns:false},'기존 형식');
+old=await store.act(old.id,old.revision,{type:'roll',value:4});
+const oldBackup=await store.read(old.id);oldBackup.history.forEach(e=>delete e.parent_revision);
+const oldImported=await store.import(JSON.stringify(oldBackup));
+const oldUndone=await store.act(oldImported.id,oldImported.revision,{type:'undo'});
+assert.equal(oldUndone.state.pending,null);
+console.log('PASS: repeated undo, branching, checkpoints, stale revision, write failure, imported undo');

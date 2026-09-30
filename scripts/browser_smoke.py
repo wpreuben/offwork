@@ -109,6 +109,15 @@ with tempfile.TemporaryDirectory(prefix="cdg-physical-ui-") as directory:
             assert converted["state"]["turn"] == legacy["state"]["turn"]
             assert converted["state"]["sides"]["cp"]["remaining"] == legacy["state"]["sides"]["cp"]["remaining"]
             assert any(item["legacy"] for item in page.evaluate("() => window.testStore.listing()"))
+            expect(page.locator('#undo-step')).to_be_disabled()
+            page.get_by_role('button', name='카드 사용·보충 완료').click()
+            expect(page.locator('#save-status')).to_contain_text('r1')
+            page.locator('#undo-step').click()
+            expect(page.locator('#save-status')).to_contain_text('r2')
+            expect(page.locator('.physical-meter.cp strong')).to_contain_text('7')
+            expect(page.locator('#undo-step')).to_be_disabled()
+            page.reload()
+            expect(page.locator('#save-status')).to_contain_text('r2')
             page.add_init_script("Object.defineProperty(window,'localStorage',{get(){throw new Error('disabled')}})")
             page.reload()
             expect(page.locator(".physical-action")).to_be_visible()
