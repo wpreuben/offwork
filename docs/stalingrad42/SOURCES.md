@@ -48,3 +48,7 @@ Erasmus의 전황→목표→병력 순서, Enemy Action: Kharkov의 위험 우�
 1. 2턴, 0VP, Voronezh 접근 후보가 합법·보급·포위 안전·예비 병력 충족이라면 `START → GOAL-VP → SAFE-INPUT → PHASE-ACTION → SAFE-USED → S1-FIRST-TURN → SAFE-LEGAL → SAFE-SUPPLY → SAFE-ENCIRCLE → GOAL-REACH → SAFE-RESERVE → ACT-ATTACK → CHOOSE → CONFIRM`이다. 실제 헥스 이동은 영문 5–8에 따라 확인한다.
 2. 7턴, 3VP, Rostov 접근 후보가 보급 단절이라면 `SAFE-SUPPLY → NEXT`. 다른 후보가 없으면 `FALLBACK`의 보급 회복을 검토한다. 높은 VP 가치도 안전 탈락을 뒤집지 않는다.
 3. 공격 후보의 예상 비율이 선택한 난이도 기준보다 낮으면 `ACT-ATTACK → NEXT`. 다른 후보가 없다면 보급 회복→재편→방어 준비 순으로 실제 가능한 행동을 찾는다. 전투 적격성 확인과 영문 9–16의 실제 CRT 해결은 별도다.
+
+## 0.2.1 검토 반영
+
+전투단 배정, 위협 규모와 종료 턴 제한, 목표 접근 진격을 추가했다. 10.2의 상대 손실 선택과 15.2의 돌파집단·잔여 허용량을 웹과 종이판에 반영했다. 공격 CRT 면수는 DD 취소 가능성을 별도로 보정하는 공격 유효성 지표이며 점령 성공 확률이 아니다. DD 보정치와 병력 배정 한도는 오토마의 조정 가능한 정책이다. 실제 DD·돌파·유닛 선택의 합법성은 영문 규칙과 실물 보드에서 확인한다.

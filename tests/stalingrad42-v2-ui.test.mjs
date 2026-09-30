@@ -20,12 +20,16 @@ test('web helper builds its own goal, then saves a movement decision in v2 JSON'
   const submit=async(id,formFields)=>handlers.submit({preventDefault(){},target:{id:id==='objective-form'?{value:formFields.id}:id,getAttribute:()=>id,fields:formFields}});
   await click('new');
   assert.ok(root.innerHTML.includes('지도 A 목표 장부'));
+  assert.ok(root.innerHTML.includes('전투단 병력 장부'));
+  await submit('group-form',{id:'6A',unitIds:'6A-1,6A-2',kind:'mobile',ready:'on',supplied:'on'});
+  await submit('distance-form',{groupId:'6A',targetId:'usman',distance:'1'});
   await Promise.all([click('check_step',{id:'air'}),click('check_step',{id:'markers'})]);
   let snapshot=[...directory.dirs.get('stalingrad42-automa-v2').files.values()].map(JSON.parse)[0];
   assert.deepEqual(new Set(snapshot.state.checks.initial),new Set(['air','markers']));
   await submit('objective-form',{id:'usman',control:'soviet',eta:'0',counterattack:'none',forceReady:'on',supplySecure:'on'});
   await click('board-review');await click('goal-plan');
   assert.ok(root.innerHTML.includes('GOAL-GAIN'));
+  assert.ok(root.innerHTML.includes('주공'));
   for(const id of ['air','markers','resources','asu','reinforcements','leaders'])await click('check_step',{id});
   await click('next_phase');
   await click('start_decision',{kind:'movement'});

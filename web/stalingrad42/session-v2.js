@@ -110,7 +110,9 @@ export function applyV2Action(state,action){
       const group=groupInput(action.group,s.groups);
       s.groups=s.groups.filter(g=>g.id!==group.id).concat(group);invalidate(s);return s;
     }
-    case 'remove_group':s.groups=s.groups.filter(g=>g.id!==action.id);invalidate(s);return s;
+    case 'remove_group':
+      if(s.threats.some(t=>t.affectedGroupId===action.id))throw new Error('이 전투단에 연결된 위협을 먼저 제거하세요.');
+      s.groups=s.groups.filter(g=>g.id!==action.id);invalidate(s);return s;
     case 'set_objective':{
       const o=action.observation;
       if(!TARGET_IDS.has(action.id)||!o||!['soviet','soviet_isolated','axis_supplied','axis_unsupplied'].includes(o.control)||![0,1,2,99].includes(o.eta)||typeof o.supplySecure!=='boolean'||typeof o.forceReady!=='boolean'||!['none','pressure','collapse'].includes(o.counterattack))throw new Error('목표의 점유·완료 시점·보급·반격 관측을 확인하세요.');

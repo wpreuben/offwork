@@ -6,6 +6,11 @@ const group={id:'6A',unitIds:['6A-1','6A-2','14Pz'],protectedUnitIds:[],kind:'mo
 const objective={control:'soviet',eta:0,supplySecure:true,forceReady:true,counterattack:'none'};
 const apply=(s,...actions)=>actions.reduce((x,a)=>applyV2Action(x,a),s);
 const planned=()=>apply({...createV2Session(),phase:'movement'},{type:'set_group',group},{type:'set_objective',id:'usman',observation:objective},{type:'review_board'},{type:'plan',die:1});
+test('위협이 연결된 전투단은 위협을 먼저 제거해야 삭제할 수 있다',()=>{
+  const s=apply(planned(),{type:'set_threats',threats:[{id:'cut',kind:'supply',eta:0,severity:'critical',actionable:true,affectedGroupId:'6A'}]});
+  assert.throws(()=>applyV2Action(s,{type:'remove_group',id:'6A'}),/위협/);
+  assert.equal(apply(s,{type:'set_threats',threats:[]},{type:'remove_group',id:'6A'}).groups.length,0);
+});
 test('병력 장부가 없으면 계획을 확정하지 못한다',()=>{
   assert.throws(()=>applyV2Action({...createV2Session(),boardReviewedTurn:1},{type:'plan',die:1}),/전투단/);
 });

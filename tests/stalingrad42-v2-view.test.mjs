@@ -23,12 +23,19 @@ test('pending decision displays one question and correct paper policy id',()=>{
 });
 
 test('attack CRT question requests six outcome counts',()=>{
-  let state=applyV2Action({...createV2Session(),phase:'combat'},{type:'start_decision',kind:'attack'});
+  let state={...createV2Session(),phase:'combat'};
+  for(const action of [
+    {type:'set_group',group:{id:'A',unitIds:['A-1'],protectedUnitIds:[],kind:'mobile',ready:true,supplied:true,guardCritical:false,targetDistances:{usman:1}}},
+    {type:'set_objective',id:'usman',observation:{control:'soviet',eta:0,supplySecure:true,forceReady:true,counterattack:'none'}},
+    {type:'review_board'},{type:'plan',die:1},{type:'start_decision',kind:'attack'}
+  ])state=applyV2Action(state,action);
   for(const value of [true,true,false,true])state=applyV2Action(state,{type:'answer',value});
   const html=renderV2Game(state);
   assert.ok(html.includes('id="crt-form"'));
   assert.ok(html.includes('name="successFaces"'));
   assert.ok(html.includes('name="lossFaces"'));
+  assert.ok(html.includes('name="defenderDd"'));
+  assert.ok(html.includes('공격 유효성 지표'));
 });
 
 test('Soviet turn offers Axis defense and VP observation in the same phase',()=>{
