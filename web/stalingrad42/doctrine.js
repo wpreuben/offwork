@@ -1,10 +1,10 @@
 import {TARGETS} from './catalog.js';
 
-export const DOCTRINE_VERSION='0.2.0';
+export const DOCTRINE_VERSION='0.2.1';
 export const DOCTRINE_PROFILES=Object.freeze({
-  beginner:{label:'입문',targetHumanWinRate:0.70,threatHorizon:0,attackPreparation:'local'},
-  standard:{label:'표준',targetHumanWinRate:0.50,threatHorizon:1,attackPreparation:'supported'},
-  hard:{label:'어려움',targetHumanWinRate:0.35,threatHorizon:2,attackPreparation:'supported_and_followup'}
+  beginner:{label:'입문',targetHumanWinRate:0.70,threatHorizon:0,attackPreparation:'local',localResponseFraction:0.34,criticalResponseGroups:1,reserveFromGroups:3},
+  standard:{label:'표준',targetHumanWinRate:0.50,threatHorizon:1,attackPreparation:'supported',localResponseFraction:0.34,criticalResponseGroups:2,reserveFromGroups:3},
+  hard:{label:'어려움',targetHumanWinRate:0.35,threatHorizon:2,attackPreparation:'supported_and_followup',localResponseFraction:0.34,criticalResponseGroups:2,reserveFromGroups:3}
 });
 
 // These are rule procedures, not voluntary actions offered to the automa.
@@ -33,7 +33,7 @@ export const PHASE_CHECKLISTS=Object.freeze({
 export const THREAT_ORDER=Object.freeze({supply:0,vp_supply:1,vp_loss:2,entry_penalty:3,city_penalty:4,encirclement:5});
 export const GOAL_STEPS=Object.freeze([
   {id:'GOAL-ELIGIBLE',text:'이미 득점한 목표와 규칙상 불가능·보급 유지 불가·즉시 붕괴할 목표를 제외한다',rule:'16.3, S1.3'},
-  {id:'GOAL-THREAT',text:'위협 우선순위표 순으로 대응한다. 같은 종류는 먼저 발생하는 위협, 다시 같으면 장부에 먼저 입력한 위협을 고른다',rule:'16.3, 24.1.4'},
+  {id:'GOAL-THREAT',text:'즉시 핵심 붕괴에 먼저 대응한다. 종료 이후 위협은 제외한다. 그 밖의 위협은 즉시 승리를 밀어내지 않고 제한된 전투단으로 대응한다. 같은 피해 규모는 위협 종류, 발생 시점, 장부 입력 순으로 고른다',rule:'16.3, 24.1.4'},
   {id:'GOAL-WIN-NOW',text:'이번 승리 판정에서 8VP를 만들 수 있는 목표를 우선한다',rule:'S1.3'},
   {id:'GOAL-CONTINUE',text:'여전히 가능하고 안전한 이전 임무를 유지한다',rule:'오토마 0.2'},
   {id:'GOAL-GAIN',text:'새 순 VP가 큰 목표, 동률이면 일찍 완료되는 목표를 고른다',rule:'S1.3'},
@@ -55,18 +55,20 @@ export function planAxisTurn({turn,vp,profile,currentGoal=null,objectiveStates={
   const urgent=[];
   for(const threat of threats){
     if(!Object.hasOwn(THREAT_ORDER,threat.kind))throw new Error(`알 수 없는 위협: ${threat.kind}`);
-    if(threat.actionable&&Number.isInteger(threat.eta)&&threat.eta<=horizon)urgent.push(threat);
+    if(threat.actionable&&Number.isInteger(threat.eta)&&threat.eta>=0&&threat.eta<=horizon&&turn+threat.eta<=8)urgent.push({...threat,severity:threat.severity??'critical'});
   }
   for(const target of TARGETS){
-    if(target.type==='vp_hex'&&objectiveStates[target.id]?.control==='axis_unsupplied')urgent.push({id:`supply_${target.id}`,kind:'vp_supply',targetId:target.id,eta:0,actionable:true});
+    if(target.type==='vp_hex'&&objectiveStates[target.id]?.control==='axis_unsupplied')urgent.push({id:`supply_${target.id}`,kind:'vp_supply',targetId:target.id,eta:0,actionable:true,severity:'significant'});
   }
-  urgent.sort((a,b)=>THREAT_ORDER[a.kind]-THREAT_ORDER[b.kind]||a.eta-b.eta);
-  if(urgent.length){
-    const threat=urgent[0];
+  const severityOrder={critical:0,significant:1,limited:2};
+  urgent.sort((a,b)=>severityOrder[a.severity]-severityOrder[b.severity]||THREAT_ORDER[a.kind]-THREAT_ORDER[b.kind]||a.eta-b.eta);
+  const respondTo=threat=>{
     const ids={supply:'THREAT-SUPPLY',vp_supply:'THREAT-VP-SUPPLY',vp_loss:'THREAT-VP-LOSS',entry_penalty:'THREAT-ENTRY',city_penalty:'THREAT-CITY',encirclement:'THREAT-ENCIRCLE'};
     const labels={supply:'보급로 단절',vp_supply:'점유 VP 보급 단절',vp_loss:'기존 VP 상실',entry_penalty:'X·Y·Z 감점',city_penalty:'서쪽 도시 감점',encirclement:'핵심 부대 포위'};
-    return {kind:'respond',id:threat.id,targetId:threat.targetId??null,policyId:ids[threat.kind],reason:`${labels[threat.kind]} 위협에 먼저 대응`,ruleRefs:threat.kind.includes('penalty')?['24.1.4']:['16.1–16.5','S1.3']};
-  }
+    return {kind:'respond',id:threat.id,targetId:threat.targetId??null,threat,localThreats:urgent.filter(x=>x.id!==threat.id),policyId:ids[threat.kind],reason:`${labels[threat.kind]} 위협에 먼저 대응`,ruleRefs:threat.kind.includes('penalty')?['24.1.4']:['16.1–16.5','S1.3']};
+  };
+  const immediate=urgent.find(x=>x.severity==='critical'&&x.eta===0);
+  if(immediate)return respondTo(immediate);
   const eligible=[];
   for(const [order,target] of TARGETS.entries()){
     const s=objectiveStates[target.id];
@@ -74,13 +76,16 @@ export function planAxisTurn({turn,vp,profile,currentGoal=null,objectiveStates={
     if(EXIT_TYPES.has(target.type)&&(!s.exitStepsReady||!s.roadReady))continue;
     eligible.push({target,order,eta:s.eta,immediateWin:s.eta===0&&vp+target.vp>=8});
   }
-  if(!eligible.length)return {kind:'consolidate',id:'consolidate',targetId:null,policyId:'GOAL-CONSOLIDATE',reason:'실행 가능하고 유지 가능한 새 목표 없음',ruleRefs:['S1.3','16.1–16.5']};
   const winning=eligible.filter(x=>x.immediateWin);
+  const critical=urgent.find(x=>x.severity==='critical');
+  if(!winning.length&&critical)return respondTo(critical);
+  if(!eligible.length&&urgent.length)return respondTo(urgent[0]);
+  if(!eligible.length)return {kind:'consolidate',id:'consolidate',targetId:null,localThreats:urgent,policyId:'GOAL-CONSOLIDATE',reason:'실행 가능하고 유지 가능한 새 목표 없음',ruleRefs:['S1.3','16.1–16.5']};
   const pool=winning.length?winning:eligible;
   const continuing=!winning.length&&pool.find(x=>x.target.id===currentGoal);
-  if(continuing)return {kind:'gain',id:continuing.target.id,targetId:continuing.target.id,policyId:'GOAL-CONTINUE',reason:'기존 임무를 계속 수행',ruleRefs:['S1.3']};
+  if(continuing)return {kind:'gain',id:continuing.target.id,targetId:continuing.target.id,localThreats:urgent,policyId:'GOAL-CONTINUE',reason:'기존 임무를 계속 수행',ruleRefs:['S1.3']};
   pool.sort((a,b)=>b.target.vp-a.target.vp||a.eta-b.eta||a.order-b.order);
   const best=pool[0],equivalent=pool.filter(x=>x.target.vp===best.target.vp&&x.eta===best.eta);
   const choice=selectEquivalent(equivalent,die,turn);
-  return {kind:'gain',id:choice.target.id,targetId:choice.target.id,policyId:winning.length?'GOAL-WIN-NOW':'GOAL-GAIN',reason:`${choice.target.vp}VP · ${choice.eta===0?'이번 턴':choice.eta===1?'다음 턴':'이후'} 목표`,ruleRefs:['S1.3'],tieIds:equivalent.map(x=>x.target.id)};
+  return {kind:'gain',id:choice.target.id,targetId:choice.target.id,localThreats:urgent,policyId:winning.length?'GOAL-WIN-NOW':'GOAL-GAIN',reason:`${choice.target.vp}VP · ${choice.eta===0?'이번 턴':choice.eta===1?'다음 턴':'이후'} 목표`,ruleRefs:['S1.3'],tieIds:equivalent.map(x=>x.target.id)};
 }

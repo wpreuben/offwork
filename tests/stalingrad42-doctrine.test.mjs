@@ -12,7 +12,8 @@ test('urgent supply threat takes priority over a printed 2 VP target',()=>{
 
 test('already scored and unsupplied VP hexes are not ordinary capture goals',()=>{
   const result=planAxisTurn(input({objectiveStates:{...state('voronezh',0,{control:'axis_supplied'}),...state('rostov',0,{control:'axis_unsupplied'}),...state('usman')}}));
-  assert.equal(result.kind,'respond');assert.equal(result.targetId,'rostov');assert.equal(result.policyId,'THREAT-VP-SUPPLY');
+  assert.equal(result.kind,'gain');assert.equal(result.targetId,'usman');
+  assert.equal(result.localThreats[0].targetId,'rostov');assert.equal(result.localThreats[0].kind,'vp_supply');
 });
 
 test('a current feasible goal persists instead of jumping to a new printed 2 VP target',()=>{
