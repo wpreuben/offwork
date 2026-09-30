@@ -8,7 +8,7 @@ let store,session,game,view='table',busy=false,toastTimer;
 const api=(path,body)=>store.request(path,body);
 function toast(message,error=false){const el=$('#toast');el.textContent=message;el.classList.toggle('error',error);el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,error?9000:4000);}
 function status(message,error=false){const el=$('#save-status');el.classList.toggle('error',error);el.textContent=message;}
-function saved(){status(session?`브라우저 JSON 저장됨 · r${session.revision}`:'브라우저 저장 준비');$('#export-save').disabled=!session;}
+function saved(){status(session?`브라우저 JSON 저장됨 · r${session.revision}`:'브라우저 저장 준비');$('#export-save').disabled=!session;$('#undo-step').disabled=!session?.can_undo;}
 function remember(sid){try{localStorage.setItem('cdg-session:'+location.pathname,sid);}catch{}}
 function face(value){return `<span class="fate-face face-${value}" role="img" aria-label="운명 주사위 ${value}"></span>`;}
 function heading(title,description){return `<div class="page-heading"><div><span class="eyebrow">PATHS OF GLORY · PHYSICAL TABLE</span><h1>${title}</h1><p class="muted">${description}</p></div></div>`;}
@@ -38,6 +38,7 @@ document.addEventListener('click',async event=>{
  if(target.dataset.load){try{session=await api(`/api/sessions/${target.dataset.load}`);remember(session.id);view='table';$('#sessions-dialog').close();render();saved();if(session.history[0]?.action?.type==='migrate_legacy')toast('이전 저장 파일에서 옮겼습니다. 실물 카드 배치를 확인하세요.');}catch(error){toast(error.message,true);}return;}
  if(target.id==='sessions-button'||target.id==='open-saves')return openSessions();
  if(target.id==='export-save')return download();
+ if(target.id==='undo-step')return act({type:'undo'});
  if(target.id==='import-save')return $('#import-file').click();
  if(!target.dataset.action)return;
  const type=target.dataset.action;

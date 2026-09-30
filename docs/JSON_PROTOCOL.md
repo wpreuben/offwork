@@ -2,6 +2,8 @@
 
 ## 실물 카드 헬퍼 (schema_version 2, 2026-09-27)
 
+`undo`는 직전 확정 행동 이전의 체크포인트를 복원한다. 되돌리기도 새 리비전과 기록으로 저장하므로 기존 기록을 삭제하지 않는다. 연속 되돌리기와 되돌린 뒤 새 진행을 지원한다. 새 기록의 `parent_revision`과 `undo` 행동의 `target_revision`으로 진행의 연결을 보존한다. 기존 schema_version 2 파일은 해당 필드 없이도 가져올 수 있다. 실물 카드와 보드는 사용자가 복원된 상태에 맞춘다.
+
 현재 패스 오브 글로리 화면은 `web/physical-app.js`와 `web/physical-storage.js`를 사용한다. 브라우저 OPFS의 실제 JSON 파일에 확정 행동을 저장하며, Web Locks·리비전 검사·파일 close 후 성공 응답을 유지한다. `state`에는 턴, 행동 페이즈, 활성 진영, 양측 남은 카드 수와 행동 라운드, 주사위 결과, 메모만 기록한다. 카드 ID, 가상 덱, 슬롯 카드는 저장하지 않는다.
 
 주요 행동은 `roll` (주사위), `complete` (실물 카드 처리 완료와 남은 수 -1), `complete` + `keep_remaining:true` (카드 효과로 추가 카드를 받아 수 유지), `clamp_remaining` (실물 받기 더미 고갈 시 4로 낮춤), `auto_ops` + `deck_exhausted:true` (고갈 때문에 후보가 없을 때 작전값 1), `next_turn`, `note`다. 각 결과의 공개·선택·보충 지침은 `web/games/physical-pog.js`가 제공한다. 실물 카드에 대한 선택과 기본 게임 합법성은 사람이 확인한다.
