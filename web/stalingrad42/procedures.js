@@ -1,15 +1,16 @@
 const node=(id,fact,question,yes,no,rule)=>({id,fact,question,yes,no,rule});
 const end=(id,action,text,rule)=>({id,action,text,rule});
 export const ATTACK_POLICY=Object.freeze({
-  beginner:{minimumSuccessFaces:5,criticalMinimumSuccessFaces:5,maxAxisLossFaces:2},
-  standard:{minimumSuccessFaces:4,criticalMinimumSuccessFaces:4,maxAxisLossFaces:2},
-  hard:{minimumSuccessFaces:4,criticalMinimumSuccessFaces:3,maxAxisLossFaces:2}
+  beginner:{minimumSuccessFaces:5,criticalMinimumSuccessFaces:5,maxAxisLossFaces:2,maxSupportCommitted:0},
+  standard:{minimumSuccessFaces:4,criticalMinimumSuccessFaces:4,maxAxisLossFaces:2,maxSupportCommitted:1},
+  hard:{minimumSuccessFaces:4,criticalMinimumSuccessFaces:3,maxAxisLossFaces:2,maxSupportCommitted:2}
 });
-export function attackReadiness({profile,successFaces,lossFaces,critical=false}){
+export const DD_POLICY=Object.freeze({none:0,possible:1,strong:2});
+export function attackReadiness({profile,successFaces,lossFaces,critical=false,defenderDd='none',supportCommitted=0}){
   const policy=ATTACK_POLICY[profile];
-  if(!policy||!Number.isInteger(successFaces)||successFaces<0||successFaces>6||!Number.isInteger(lossFaces)||lossFaces<0||lossFaces>6||typeof critical!=='boolean')throw new Error('CRT 1–6 결과의 성공·추축군 손실 면을 확인하세요.');
-  const minimum=critical?policy.criticalMinimumSuccessFaces:policy.minimumSuccessFaces;
-  return {ready:successFaces>=minimum&&lossFaces<=policy.maxAxisLossFaces,minimumSuccessFaces:minimum,maxAxisLossFaces:policy.maxAxisLossFaces,policyId:'ATT-CRT',ruleRef:'8–10'};
+  if(!policy||!Number.isInteger(successFaces)||successFaces<0||successFaces>6||!Number.isInteger(lossFaces)||lossFaces<0||lossFaces>6||typeof critical!=='boolean'||!Object.hasOwn(DD_POLICY,defenderDd)||!Number.isInteger(supportCommitted)||supportCommitted<0||supportCommitted>2)throw new Error('CRT 면수·수비측 DD·지원 수를 확인하세요.');
+  const minimum=Math.min(6,(critical?policy.criticalMinimumSuccessFaces:policy.minimumSuccessFaces)+DD_POLICY[defenderDd]);
+  return {ready:successFaces>=minimum&&lossFaces<=policy.maxAxisLossFaces&&supportCommitted<=policy.maxSupportCommitted,minimumSuccessFaces:minimum,maxAxisLossFaces:policy.maxAxisLossFaces,maxSupportCommitted:policy.maxSupportCommitted,ddAdjustment:DD_POLICY[defenderDd],policyId:'ATT-CRT',ruleRef:'8–11',metric:'공격 유효성 지표 · 점령 성공률 아님'};
 }
 
 // Printed charts and the browser walk these exact nodes. A missing observation never becomes false.
@@ -48,9 +49,26 @@ export const PROCEDURES=Object.freeze({
     node('ADV-LEGAL','legal','전투 결과와 유닛 상태상 진격할 수 있는가?','ADV-SUPPLY','ADV-HOLD','14.0'),
     node('ADV-SUPPLY','supplyAfter','진격 뒤 필요한 보급선이 유지되는가?','ADV-EXPOSURE','ADV-HOLD','16.3'),
     node('ADV-EXPOSURE','counterattackCollapse','소련군 다음 턴에 진격 부대가 고립·붕괴하는가?','ADV-HOLD','ADV-GOAL','14.0, 16.3'),
-    node('ADV-GOAL','takesGoal','진격으로 작전 목표 또는 필수 보급로를 확보하는가?','ADV-TAKE','ADV-HOLD','S1.3, 16.3'),
+    node('ADV-GOAL','takesGoal','진격으로 작전 목표 또는 필수 보급로를 확보하는가?','ADV-TAKE','ADV-PROGRESS','S1.3, 16.3'),
+    node('ADV-PROGRESS','improvesPosition','합법 진격으로 목표까지 헥스 거리를 줄이거나 적 보급·퇴각로 차단 또는 합법 돌파 기회를 만드는가?','ADV-APPROACH','ADV-HOLD','14.0, 15.0'),
     end('ADV-TAKE','advance','목표를 확보하는 첫 합법 진격 경로를 선택한다','14.0'),
-    end('ADV-HOLD','hold','진격하지 않거나 안전한 최소 진격만 수행한다','14.0')
+    end('ADV-APPROACH','advance','안전 조건 안에서 목표 접근·적 보급로 차단·돌파 기회를 가장 많이 만드는 합법 경로로 진격한다','14.0, 15.0'),
+    end('ADV-HOLD','hold','안전하거나 유익한 진격 경로가 없으므로 현 위치를 유지한다','14.0')
+  ]},
+  breakthrough:{title:'돌파전투',root:'BT-LEGAL',nodes:[
+    node('BT-LEGAL','legal','초기 전투가 Adv 2–4이고, 참여한 한 돌파집단으로 합법적인 목표를 공격하는가? 포병 금지와 원 공격 항공지원만 허용하는 15.2.9를 확인했는가?','BT-ALLOWANCE','BT-HOLD','15.1–15.2.9'),
+    node('BT-ALLOWANCE','allowanceReady','초기 전투에서 받은 진격 허용량 중 공격 비용 1헥스 이상이 남았는가?','BT-SUPPLY','BT-HOLD','15.2.4'),
+    node('BT-SUPPLY','supplyAfter','돌파 뒤에도 핵심 병력의 보급을 유지하는가?','BT-EXPOSURE','BT-HOLD','16.3'),
+    node('BT-EXPOSURE','counterattackCollapse','돌파로 다음 소련군 차례에 핵심 병력·보급로가 고립·붕괴하는가?','BT-HOLD','BT-PURPOSE','15.0, 16.3'),
+    node('BT-PURPOSE','goalRelevant','목표 접근·보급로 확보·적 퇴각로 차단에 도움이 되는가?','BT-ODDS','BT-HOLD','15.0'),
+    node('BT-ODDS','oddsReady','실제 CRT와 수비측 DD를 반영한 공격 유효성 기준을 만족하는가?','BT-EXECUTE','BT-HOLD','8–11, 15.0'),
+    end('BT-EXECUTE','breakthrough','돌파집단으로 공격하고 허용량 1을 차감한다. 결과가 Adv 3/4일 때만 남은 허용량으로 다음 돌파를 검사한다','15.2.4, 15.2.7–15.2.8'),
+    end('BT-HOLD','hold','돌파전투를 멈추고 다른 참여 유닛의 합법 진격을 처리한다','15.2.1')
+  ]},
+  loss:{title:'손실 유닛 선택',root:'LOSS-SIDE',nodes:[
+    node('LOSS-SIDE','enemyLoss','실제 CRT의 손실 선택권에 따라 추축군이 소련군 손실 유닛을 고르는가?','LOSS-ENEMY','LOSS-OWN','10.2.2'),
+    end('LOSS-ENEMY','select_enemy_loss','규칙상 선택 가능한 소련군 후보에 적군 손실 우선순위를 적용한다','10.2.2–10.2.3'),
+    end('LOSS-OWN','select_own_loss','규칙상 선택 가능한 추축군 후보에 자군 손실 우선순위를 적용한다','10.2.1–10.2.2')
   ]}
 });
 
@@ -66,15 +84,20 @@ export const SELECTION_RULES=Object.freeze({
     {id:'ATT-TIE',text:'동일하면 지도 북쪽 헥스, 그다음 서쪽 헥스를 먼저 공격한다',rule:'오토마 0.2'}
   ],
   defense:[
-    {id:'DEF-LEAD',text:'Determined Defense 선도 유닛은 적법한 유닛 중 생존 가능·높은 방어 능력·낮은 작전 손실 순으로 고른다',rule:'11.2.3'},
+    {id:'DEF-LEAD',text:'Determined Defense 선도 유닛은 적법한 Good Order 전투 유닛 중 높은 선도 DRM(Elite +1, Low Quality −1, 독일 도시/축성 Elite), 생존 가능한 스텝 수, 낮은 작전 손실 순으로 고른다',rule:'11.2.3–11.2.4'},
     {id:'DEF-SUPPORT',text:'VP 또는 핵심 보급로를 지키는 방어에 가용 지원을 먼저 투입한다',rule:'11.3'}
   ],
   advance:[
-    {id:'ADV-ROUTE',text:'목표 점유, 도로 보급 연결, 재포위 회피 순으로 합법 진격 경로를 고른다',rule:'14.0, 16.3'}
+    {id:'ADV-ROUTE',text:'목표 점유·도로 보급 연결, 목표 거리 감소, 적 보급·퇴각로 차단, 합법 돌파 기회, 유리한 방어 위치 순으로 안전한 합법 경로를 고른다',rule:'14.0–15.0, 16.3'}
+  ],
+  breakthrough:[
+    {id:'BT-GROUP',text:'초기 공격에 참여한 가용 기계화 유닛, 공격 능력, 스텝 수, 유닛 ID 순으로 합법적인 한 스택의 돌파집단을 만든다. 남겨야 할 보급·거점 경계 병력은 제외한다',rule:'15.2.2–15.2.3'},
+    {id:'BT-COST',text:'집단 형성·초기 방향 변경·각 헥스 진격·돌파 공격의 비용을 초기 허용량에서 차감한다. 추가 허용량은 얻지 않는다. Adv 3/4가 아니면 종료한다',rule:'15.2.4, 15.2.7–15.2.9'}
   ],
   loss:[
     {id:'LOSS-ELIGIBLE',text:'CRT가 손실 선택권을 누구에게 주는지 확인하고 규칙상 참여한 유닛만 후보로 둔다',rule:'10.2'},
-    {id:'LOSS-PROTECT',text:'VP·보급로 유지에 필수인 유닛과 기계화 돌파 전력은 가능한 한 보존한다',rule:'10.2'},
+    {id:'LOSS-PROTECT',text:'자군: 보급 핵심, VP 핵심, 기계화 전력을 보존하고 낮은 품질, 마지막 스텝이 아닌 유닛 순으로 손실을 고른다',rule:'10.2'},
+    {id:'LOSS-ENEMY',text:'적군: 보급 핵심, VP 핵심, 마지막 스텝 제거, 기계화 전력, 높은 품질 순으로 타격한다. 선택 제한은 항상 먼저 적용한다',rule:'10.2.3'},
     {id:'LOSS-TIE',text:'동등하면 유닛 ID 오름차순으로 고른다',rule:'오토마 0.2'}
   ],
   retreat:[
@@ -101,12 +124,13 @@ export function runProcedure(kind,facts={}){
   throw new Error(`절차 순환: ${kind}`);
 }
 
-export function rankLocalOptions(kind,options){
+export function rankLocalOptions(kind,options,{enemyLoss=false}={}){
   if(!Array.isArray(options)||!['retreat','loss'].includes(kind))throw new Error('지역 선택지 형식 오류');
   const available=options.filter(x=>kind==='retreat'?x.legal:x.eligible);
   const bool=(x,key)=>x[key]===true?1:0;
   return available.slice().sort((a,b)=>{
-    if(kind==='retreat')return bool(b,'supplied')-bool(a,'supplied')||bool(a,'isolated')-bool(b,'isolated')||bool(b,'preservesVp')-bool(a,'preservesVp')||(b.enemyDistance??0)-(a.enemyDistance??0)||a.id.localeCompare(b.id);
-    return bool(a,'essentialToSupply')-bool(b,'essentialToSupply')||bool(a,'essentialToVp')-bool(b,'essentialToVp')||bool(a,'mechanized')-bool(b,'mechanized')||a.id.localeCompare(b.id);
+    if(kind==='retreat')return bool(b,'supplied')-bool(a,'supplied')||bool(a,'isolated')-bool(b,'isolated')||bool(b,'preservesVp')-bool(a,'preservesVp')||(b.enemyDistance??0)-(a.enemyDistance??0)||(a.northOrder??99)-(b.northOrder??99)||(a.westOrder??99)-(b.westOrder??99)||a.id.localeCompare(b.id);
+    if(enemyLoss)return bool(b,'essentialToSupply')-bool(a,'essentialToSupply')||bool(b,'essentialToVp')-bool(a,'essentialToVp')||Number(b.steps===1)-Number(a.steps===1)||bool(b,'mechanized')-bool(a,'mechanized')||(b.quality??0)-(a.quality??0)||a.id.localeCompare(b.id);
+    return bool(a,'essentialToSupply')-bool(b,'essentialToSupply')||bool(a,'essentialToVp')-bool(b,'essentialToVp')||bool(a,'mechanized')-bool(b,'mechanized')||(a.quality??0)-(b.quality??0)||Number(a.steps===1)-Number(b.steps===1)||a.id.localeCompare(b.id);
   });
 }

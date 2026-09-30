@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {renderPaper} from '../web/stalingrad42/paper.js';
 import {DOCTRINE_PROFILES,PHASE_CHECKLISTS,DOCTRINE_VERSION} from '../web/stalingrad42/doctrine.js';
 import {PROCEDURES,SELECTION_RULES,runProcedure,ATTACK_POLICY} from '../web/stalingrad42/procedures.js';
+import {OPERATION_STEPS} from '../web/stalingrad42/operations.js';
 
 test('paper uses the new doctrine, not the old global VP score',()=>{
   for(const profile of Object.keys(DOCTRINE_PROFILES)){
@@ -12,6 +13,15 @@ test('paper uses the new doctrine, not the old global VP score',()=>{
     assert.ok(html.includes(String(ATTACK_POLICY[profile].minimumSuccessFaces)));
     assert.ok(!html.includes('목표 VP ×'));
   }
+});
+
+test('종이판은 전투단 임무 배정과 DD·돌파·손실 선택을 공유한다',()=>{
+  const html=renderPaper();
+  for(const step of OPERATION_STEPS)assert.ok(html.includes(step.id),step.id);
+  assert.ok(html.includes('공격 유효성 지표'));
+  assert.ok(html.includes('전투단 병력 장부'));
+  assert.ok(!html.includes('undefined'));
+  assert.ok(html.includes('적군 손실'));
 });
 
 test('all phase steps and local choice priorities have rule references on paper',()=>{
