@@ -31,6 +31,14 @@ export const PHASE_CHECKLISTS=Object.freeze({
 });
 
 export const THREAT_ORDER=Object.freeze({supply:0,vp_supply:1,vp_loss:2,entry_penalty:3,city_penalty:4,encirclement:5});
+export const GOAL_STEPS=Object.freeze([
+  {id:'GOAL-ELIGIBLE',text:'이미 득점한 목표와 규칙상 불가능·보급 유지 불가·즉시 붕괴할 목표를 제외한다',rule:'16.3, S1.3'},
+  {id:'GOAL-THREAT',text:'보급 단절, 얻은 VP 상실, X·Y·Z 및 시작선 서쪽 도시 감점 위협에 먼저 대응한다',rule:'16.3, 24.1.4'},
+  {id:'GOAL-WIN-NOW',text:'이번 승리 판정에서 8VP를 만들 수 있는 목표를 우선한다',rule:'S1.3'},
+  {id:'GOAL-CONTINUE',text:'여전히 가능하고 안전한 이전 임무를 유지한다',rule:'오토마 0.2'},
+  {id:'GOAL-GAIN',text:'새 순 VP가 큰 목표, 동률이면 일찍 완료되는 목표를 고른다',rule:'S1.3'},
+  {id:'GOAL-TIE',text:'완전 동률이면 상위 세 목표를 공개 d6로 고른다: 2개는 홀/짝, 3개는 1–2/3–4/5–6',rule:'오토마 0.2'}
+]);
 const SCORED=new Set(['axis_supplied','soviet_isolated']);
 const EXIT_TYPES=new Set(['east_exit','south_exit']);
 
