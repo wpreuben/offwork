@@ -14,8 +14,8 @@ export function orderedMissionUnits(group,usedUnits=[]){
   return group.unitIds.filter(id=>!group.protectedUnitIds?.includes(id)&&!usedUnits.includes(id)).slice().sort((a,b)=>a.localeCompare(b));
 }
 
-export function allocateMissions({plan,groups,profile}){
-  const params=DOCTRINE_PROFILES[profile];
+export function allocateMissions({plan,groups,profile,profilePolicy}){
+  const params=profilePolicy??DOCTRINE_PROFILES[profile];
   if(!params||!Array.isArray(groups))throw new Error('작전 병력 입력 오류');
   const missions=[],assigned=new Set();
   const active=groups.filter(g=>g.ready);

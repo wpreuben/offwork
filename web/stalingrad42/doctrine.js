@@ -49,9 +49,9 @@ function selectEquivalent(items,die,turn){
   return top[Math.floor((die-1)*top.length/6)];
 }
 
-export function planAxisTurn({turn,vp,profile,currentGoal=null,objectiveStates={},threats=[],die}){
+export function planAxisTurn({turn,vp,profile,currentGoal=null,objectiveStates={},threats=[],die,profilePolicy}){
   if(!Number.isInteger(turn)||turn<1||turn>8||!Number.isInteger(vp)||!DOCTRINE_PROFILES[profile]||!Number.isInteger(die)||die<1||die>6)throw new Error('작전 입력의 턴·VP·난이도·d6를 확인하세요.');
-  const horizon=DOCTRINE_PROFILES[profile].threatHorizon;
+  const horizon=(profilePolicy??DOCTRINE_PROFILES[profile]).threatHorizon;
   const urgent=[];
   for(const threat of threats){
     if(!Object.hasOwn(THREAT_ORDER,threat.kind))throw new Error(`알 수 없는 위협: ${threat.kind}`);

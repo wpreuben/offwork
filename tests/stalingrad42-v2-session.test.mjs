@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createV2Session,applyV2Action} from '../web/stalingrad42/session-v2.js';
+import {createV2Session as rawCreateV2Session,applyV2Action} from '../web/stalingrad42/session-v2.js';
+const createV2Session=options=>applyV2Action(rawCreateV2Session(options),{type:'set_group',group:{id:'6A',unitIds:['6A-1','6A-2','14Pz'],protectedUnitIds:[],kind:'mobile',ready:true,supplied:true,guardCritical:false,targetDistances:{usman:1}}});
 
 const doAction=(state,...actions)=>actions.reduce((s,a)=>applyV2Action(s,a),state);
 const goal={control:'soviet',eta:0,supplySecure:true,forceReady:true,counterattack:'none'};
@@ -21,7 +22,7 @@ test('rules checklist cannot be skipped and a chosen goal survives next turn',()
   assert.equal(s.phase,'movement');
   s=doAction(s,{type:'set_objective',id:'usman',observation:goal},{type:'review_board'},{type:'plan',die:1});
   assert.equal(s.currentGoal,'usman');
-  s=doAction(s,{type:'next_phase'},{type:'next_phase'});
+  s=doAction(s,{type:'complete_group',groupId:'6A'},{type:'next_phase'},{type:'next_phase'});
   for(const id of ['automatic_recovery','rally','replacement_markers'])s=applyV2Action(s,{type:'check_step',id});
   s=applyV2Action(s,{type:'next_phase'});
   for(const id of ['railheads','supply_status','isolation','asu_supply'])s=applyV2Action(s,{type:'check_step',id});
@@ -64,8 +65,9 @@ test('a supply emergency chosen in the plan directs movement without repeat ques
 });
 
 test('changing the board invalidates a plan and VP observation marks scored goals',()=>{
-  let s={...createV2Session(),phase:'soviet_turn'};
+  let s=createV2Session();
   s=doAction(s,{type:'set_objective',id:'usman',observation:goal},{type:'review_board'},{type:'plan',die:1});
+  s={...s,phase:'soviet_turn'};
   s=applyV2Action(s,{type:'set_threats',threats:[]});
   assert.equal(s.plan,null);
   assert.throws(()=>applyV2Action({...s,phase:'movement'},{type:'start_decision',kind:'movement'}),/작전 목표/);
@@ -93,11 +95,12 @@ test('first turn rejects inactive formations and requires tactical range confirm
 
 test('attack CRT facts are calculated from six outcomes and cannot be guessed',()=>{
   let s={...createV2Session(),phase:'combat'};
+  s=doAction(s,{type:'set_objective',id:'usman',observation:goal},{type:'review_board'},{type:'plan',die:1});
   s=applyV2Action(s,{type:'start_decision',kind:'attack'});
   for(const value of [true,true,false,true])s=applyV2Action(s,{type:'answer',value});
   assert.equal(s.pending.result.fact,'oddsReady');
   assert.throws(()=>applyV2Action(s,{type:'answer',value:true}),/CRT/);
-  s=applyV2Action(s,{type:'set_crt',successFaces:4,lossFaces:1,critical:false});
+  s=applyV2Action(s,{type:'set_crt',successFaces:4,lossFaces:1,defenderDd:'none',supportCommitted:0});
   assert.equal(s.pending.result.fact,'canHold');
   s=applyV2Action(s,{type:'answer',value:true});
   assert.equal(s.pending.result.action,'attack');

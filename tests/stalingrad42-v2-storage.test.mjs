@@ -39,8 +39,20 @@ test('version 2 record rejects foreign, stale and failed writes',async()=>{
   const saved=await store.write(createV2Session(),undefined,0);
   assert.equal(validateV2Record(saved),true);
   assert.throws(()=>validateV2Record({...saved,appId:'STAL42-AXIS-0.1'}));
+  assert.throws(()=>validateV2Record({...saved,state:{...saved.state,phase:'invalid'}}));
+  assert.throws(()=>validateV2Record({...saved,state:{...saved.state,turn:0}}));
   await assert.rejects(store.write(saved.state,saved.id,0),/충돌/);
   root.directories.get('stalingrad42-automa-v2').failClose=true;
   await assert.rejects(store.write(createV2Session(),undefined,0),/disk/);
   assert.equal((await store.listing()).length,1);
+});
+
+test('0.2.0 JSON은 이력을 보존하고 0.2.1의 새 기록으로 전환한다',async()=>{
+  const store=await V2JsonStore.open({root:new MemoryDirectory(),locks});
+  const state={...createV2Session(),policyVersion:'0.2.0',pending:{kind:'movement'},history:[{type:'legacy',turn:1}]};
+  delete state.groups;
+  const record={appId:APP_ID,schemaVersion:2,id:'legacy',revision:1,updatedAt:'2026-09-30',state};
+  const imported=await store.importJson(JSON.stringify(record));
+  assert.equal(imported.state.policyVersion,'0.2.1');assert.equal(imported.state.pending,null);
+  assert.equal(imported.state.history[0].type,'legacy');assert.notEqual(imported.id,'legacy');
 });
