@@ -138,6 +138,19 @@ with tempfile.TemporaryDirectory(prefix="cdg-physical-ui-") as directory:
             expect(page.get_by_text('동맹군 · 제한전', exact=True)).to_be_visible()
             page.locator('#undo-step').click()
             expect(page.get_by_text('동맹군 · 동원전', exact=True)).to_be_visible()
+            page.locator('[data-action="next_turn"]').click()
+            page.locator('[data-action="roll"]').click()
+            pending_text = page.locator('.main-instruction').inner_text()
+            page.locator('[data-action="war_shuffle"][data-side="ap"][data-stage="limited"]').click()
+            expect(page.get_by_text('연합군 · 제한전', exact=True)).to_be_visible()
+            assert page.locator('.main-instruction').inner_text() == pending_text
+            expect(page.locator('.physical-meter.cp strong')).to_contain_text('7')
+            page.reload()
+            expect(page.get_by_text('연합군 · 제한전', exact=True)).to_be_visible()
+            assert page.locator('.main-instruction').inner_text() == pending_text
+            page.locator('#undo-step').click()
+            expect(page.get_by_text('연합군 · 동원전', exact=True)).to_be_visible()
+            assert page.locator('.main-instruction').inner_text() == pending_text
             page.add_init_script("Object.defineProperty(window,'localStorage',{get(){throw new Error('disabled')}})")
             page.reload()
             expect(page.locator(".physical-action")).to_be_visible()

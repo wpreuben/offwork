@@ -28,7 +28,7 @@ function historyView(){return heading('플레이 기록','확정한 주사위와
 function render(){
  $('#page-title').textContent=views[view];document.querySelectorAll('[data-view]').forEach(button=>button.classList.toggle('active',button.dataset.view===view));
  $('#main').innerHTML=view==='rules'?rulesView():!session?welcome():view==='history'?historyView():tableView();
- if(view==='table'&&session?.state.phase==='draw')$('.physical-action').insertAdjacentHTML('beforebegin',warView(session.state));
+ if(view==='table'&&session)$('.physical-action').insertAdjacentHTML('afterend',warView(session.state));
 }
 async function act(action,revision=session?.revision){if(busy||!session)return;busy=true;status('JSON 파일에 저장 중…');try{session=await api(`/api/sessions/${session.id}/actions`,{expected_revision:revision,action});busy=false;render();saved();toast(session.history.at(-1).message);}catch(error){status('저장되지 않음',true);toast(error.message,true);if(error.status===409){try{session=await api(`/api/sessions/${session.id}`);busy=false;render();saved();}catch{}}}finally{busy=false;}}
 async function download(){if(!session)return;try{const data=await api(`/api/sessions/${session.id}/export`),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download=`pog-physical-${data.id.slice(0,8)}-r${data.revision}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(error){toast(error.message,true);}}
