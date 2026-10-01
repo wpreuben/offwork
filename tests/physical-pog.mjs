@@ -55,15 +55,7 @@ assert.throws(()=>move(round,{type:'war_shuffle',side:'cp',stage:'limited'}));
 assert.throws(()=>move(round,{type:'war_shuffle',side:'ap',stage:'total'}));
 round=move(round,{type:'war_shuffle',side:'cp',stage:'total'});
 assert.throws(()=>move(round,{type:'war_shuffle',side:'cp',stage:'limited'}));
-for(const pending of [false,true]){
- let midTurn=create({guns:false});
- if(pending)midTurn=move(midTurn,{type:'roll',value:3});
- const before=structuredClone(midTurn);
- midTurn=move(midTurn,{type:'war_shuffle',side:'ap',stage:'limited'});
- assert.equal(midTurn.sides.ap.war_stage,'limited');
- midTurn.sides.ap.war_stage='mobilization';
- assert.deepEqual(midTurn,before,'カード 추가는 차례·카운트·주사위 결과를 보존');
-}
+assert.throws(()=>move(create({guns:false}),{type:'war_shuffle',side:'cp',stage:'limited'}));
 const older=structuredClone(beforeWar);
 delete older.sides.cp.war_stage;delete older.sides.ap.war_stage;
 validate(older);

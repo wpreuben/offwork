@@ -33,14 +33,13 @@ function advance(s){const side=s.active;s.rounds[side]++;s.pending=null;
  s.active=next;
 }
 export function availableActions(s){
- const war=sides.flatMap(side=>{
+ if(s.phase==='draw')return [{type:'next_turn'},...sides.flatMap(side=>{
   const stage=s.sides[side].war_stage;
   return (stage==='total'?[]:stage==='limited'?['total']:stage==='mobilization'?['limited']:['limited','total']).map(stage=>({type:'war_shuffle',side,stage}));
- });
- if(s.phase==='draw')return [{type:'next_turn'},...war];
+ })];
  const clamp=s.sides[s.active].remaining>4?[{type:'clamp_remaining'}]:[];
- if(s.pending)return [...war,...clamp,{type:'complete',keep_remaining:false},{type:'complete',keep_remaining:true},...(s.pending.forced?[]:[{type:'auto_ops'}])];
- return [...war,...clamp,{type:s.sides[s.active].remaining===0?'skip':'roll'}];
+ if(s.pending)return [...clamp,{type:'complete',keep_remaining:false},{type:'complete',keep_remaining:true},...(s.pending.forced?[]:[{type:'auto_ops'}])];
+ return [...clamp,{type:s.sides[s.active].remaining===0?'skip':'roll'}];
 }
 export function apply(original,action){
  require(action&&typeof action==='object'&&!Array.isArray(action),'행동 형식이 올바르지 않습니다.');
