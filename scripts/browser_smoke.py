@@ -41,7 +41,7 @@ with tempfile.TemporaryDirectory(prefix="cdg-physical-ui-") as directory:
             with page.expect_popup() as popup_info:
                 guide.click()
             popup = popup_info.value
-            expect(popup).to_have_title("Paths of Glory 실전 잔룰 · 예외룰 치트시트")
+            expect(popup).to_have_title("Paths of Glory 예외룰 치트시트 v3")
             popup.close()
             page.get_by_role("button", name="새 게임 시작").last.click()
             page.locator('#setup-form input[name="name"]').fill("실물 카드 검증")
@@ -118,6 +118,26 @@ with tempfile.TemporaryDirectory(prefix="cdg-physical-ui-") as directory:
             expect(page.locator('#undo-step')).to_be_disabled()
             page.reload()
             expect(page.locator('#save-status')).to_contain_text('r2')
+            page.evaluate("""async () => {
+                const {FileStore} = await import('./physical-storage.js');
+                window.testStore = await FileStore.open();
+                const all = await window.testStore.listing();
+                const current = await window.testStore.get(all.find(s => !s.legacy).id);
+                let s = current;
+                while (s.state.phase !== 'draw') {
+                    if (!s.state.pending) s = await window.testStore.act(s.id, s.revision, {type:'roll',value:4});
+                    s = await window.testStore.act(s.id, s.revision, {type:'complete'});
+                }
+            }""")
+            page.reload()
+            limited = page.locator('[data-action="war_shuffle"][data-side="cp"][data-stage="limited"]')
+            expect(limited).to_be_visible()
+            limited.click()
+            expect(page.get_by_text('동맹군 · 제한전', exact=True)).to_be_visible()
+            page.reload()
+            expect(page.get_by_text('동맹군 · 제한전', exact=True)).to_be_visible()
+            page.locator('#undo-step').click()
+            expect(page.get_by_text('동맹군 · 동원전', exact=True)).to_be_visible()
             page.add_init_script("Object.defineProperty(window,'localStorage',{get(){throw new Error('disabled')}})")
             page.reload()
             expect(page.locator(".physical-action")).to_be_visible()

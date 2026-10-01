@@ -2,6 +2,8 @@
 
 ## 실물 카드 헬퍼 (schema_version 2, 2026-09-27)
 
+`war_shuffle` + `side: "cp" | "ap"` + `stage: "limited" | "total"`는 다음 턴 준비 단계에서 실물 카드 추가·다시 섞기·디스플레이 재구성 완료를 기록한다. 진영별 선택적 `war_stage`를 저장하며 남은 수·라운드는 유지한다. 기존 schema_version 2의 필드가 없는 체크포인트는 그대로 검증·복원한다. 새 게임은 `mobilization`에서 시작하고, schema_version 1 변환은 기존 `stage`를 옮긴다.
+
 `undo`는 직전 확정 행동 이전의 체크포인트를 복원한다. 되돌리기도 새 리비전과 기록으로 저장하므로 기존 기록을 삭제하지 않는다. 연속 되돌리기와 되돌린 뒤 새 진행을 지원한다. 새 기록의 `parent_revision`과 `undo` 행동의 `target_revision`으로 진행의 연결을 보존한다. 기존 schema_version 2 파일은 해당 필드 없이도 가져올 수 있다. 실물 카드와 보드는 사용자가 복원된 상태에 맞춘다.
 
 현재 패스 오브 글로리 화면은 `web/physical-app.js`와 `web/physical-storage.js`를 사용한다. 브라우저 OPFS의 실제 JSON 파일에 확정 행동을 저장하며, Web Locks·리비전 검사·파일 close 후 성공 응답을 유지한다. `state`에는 턴, 행동 페이즈, 활성 진영, 양측 남은 카드 수와 행동 라운드, 주사위 결과, 메모만 기록한다. 카드 ID, 가상 덱, 슬롯 카드는 저장하지 않는다.

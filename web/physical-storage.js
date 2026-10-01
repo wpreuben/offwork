@@ -28,7 +28,7 @@ export function validateSession(s){
 }
 function physicalFromLegacy(old){const previous=old.state,s=rules.create({max_hand:previous.max_hand,guns:previous.guns});
  s.turn=previous.turn;s.active=previous.active;s.rounds=structuredClone(previous.rounds);s.phase=previous.phase==='draw'?'draw':'action';s.pending=null;
- for(const side of ['cp','ap'])s.sides[side].remaining=previous.sides[side].remaining;
+ for(const side of ['cp','ap']){s.sides[side].remaining=previous.sides[side].remaining;s.sides[side].war_stage=previous.sides[side].stage;}
  s.notes=structuredClone(previous.notes||[]);
  if(previous.phase==='action'&&previous.pending){const p=previous.pending;if(p.forced==='guns')s.pending={die:null,forced:'guns'};else if(Number.isInteger(p.die))s.pending={die:p.die};}
  if(previous.phase==='resolve'){
